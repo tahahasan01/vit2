@@ -1,0 +1,87 @@
+# ─────────────────────────────────────────────────────────
+# The Dirty Laundry V2 — Docker Compose (Local Development)
+# ─────────────────────────────────────────────────────────
+#
+# Services:
+#   1. backend   — FastAPI (uvicorn)
+#   2. worker    — ARQ background worker (pipeline orchestrator)
+#   3. redis     — Job queue & caching
+#   4. frontend  — Vite dev server (or nginx in production)
+#
+# Supabase runs externally (cloud or local via supabase CLI).
+# ─────────────────────────────────────────────────────────
+
+version: "3.9"
+
+services:
+  # ─── Redis ───
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ─── Backend API ───
+  backend:
+    build:
+      context: ./backend
+      target: production
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+
+  # ─── ARQ Worker ───
+  worker:
+    build:
+      context: ./backend
+      target: production
+    command: ["python", "-m", "arq", "app.workers.worker_config.WorkerSettings"]
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ─── Frontend (production build served by nginx) ───
+  frontend:
+    build:
+      context: ./frontend
+      target: production
+      args:
+        VITE_SUPABASE_URL: ${SUPABASE_URL}
+        VITE_SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+        VITE_API_BASE_URL: /api/v1
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  redis-data:

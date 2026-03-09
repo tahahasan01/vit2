@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #0a0a0a;
+    color: #fafafa;
+    overflow-x: hidden;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
+
+@layer components {
+  /* Glass morphism card */
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl;
+  }
+
+  /* Brand gradient */
+  .brand-gradient {
+    @apply bg-gradient-to-r from-brand-400 to-brand-600;
+  }
+
+  /* Subtle glow effect */
+  .glow {
+    box-shadow: 0 0 40px rgba(168, 85, 247, 0.15),
+                0 0 80px rgba(168, 85, 247, 0.05);
+  }
+
+  /* Progress bar stripe animation */
+  .progress-stripe {
+    background-image: linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.1) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.1) 75%,
+      transparent 75%,
+      transparent
+    );
+    background-size: 1rem 1rem;
+    animation: stripe-move 0.5s linear infinite;
+  }
+
+  /* Canvas container for R3F */
+  .canvas-container {
+    @apply w-full h-full relative;
+    touch-action: none;
+  }
+
+  .canvas-container canvas {
+    @apply w-full h-full outline-none;
+  }
+
+  /* Upload dropzone */
+  .dropzone {
+    @apply border-2 border-dashed border-white/20 rounded-2xl p-8
+           flex flex-col items-center justify-center gap-4
+           transition-all duration-300 cursor-pointer;
+  }
+  .dropzone:hover,
+  .dropzone.active {
+    @apply border-brand-400 bg-brand-400/5;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@keyframes stripe-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 1rem 0; }
+}
+
+/* Framer Motion layout animation support */
+[data-framer-portal-id] {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+}

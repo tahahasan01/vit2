@@ -1,0 +1,33 @@
+# ── Core ─────────────────────────────────────
+fastapi==0.115.*
+uvicorn[standard]==0.34.*
+pydantic==2.10.*
+pydantic-settings==2.7.*
+python-dotenv==1.0.*
+python-multipart==0.0.*
+
+# ── HTTP client ──────────────────────────────
+httpx==0.28.*
+
+# ── Async job queue ──────────────────────────
+arq==0.26.*
+
+# ── Resilience ───────────────────────────────
+tenacity==9.0.*
+pybreaker==1.2.*
+
+# ── Logging ──────────────────────────────────
+structlog==24.4.*
+
+# ── Image processing ────────────────────────
+Pillow==11.1.*
+
+# ── Body estimation (Layer 1 — local CPU) ────
+mediapipe==0.10.*
+
+# ── Supabase (optional — for direct SDK use) ─
+# supabase==2.11.*  # We use raw httpx for more control
+
+# ── Type stubs / dev ─────────────────────────
+# pydantic[email]  # Uncomment if using EmailStr
+email-validator==2.2.*
