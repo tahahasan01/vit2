@@ -34,10 +34,10 @@ class SynthesisService:
     """
     Layer 2: Garment Draping — Diffusion model core.
 
-    Uses IDM-VTON (ECCV 2024) via Replicate:
-    - High-level garment semantics via visual encoder → cross-attention
-    - Low-level features via parallel UNet → self-attention
-    - Produces photorealistic 768×1024 try-on images
+    Provider chain (3-tier):
+      1. Fashn.ai tryon-v1.6 (PRIMARY — if API key configured)
+      2. Replicate IDM-VTON (ECCV 2024)
+      3. Replicate Flux-VTON (fallback)
     """
 
     def __init__(
@@ -45,10 +45,12 @@ class SynthesisService:
         settings: Settings,
         http_client: httpx.AsyncClient,
         storage: StorageService,
+        fashn_service=None,
     ):
         self._settings = settings
         self._http = http_client
         self._storage = storage
+        self._fashn = fashn_service
         self._replicate_token = settings.replicate.api_token
         self._primary_model = settings.replicate.vto_model_id
         self._fallback_model = settings.replicate.vto_fallback_model_id
@@ -79,43 +81,65 @@ class SynthesisService:
         if self._settings.use_stubs:
             return self._stub_synthesis(start, user_id, job_id)
 
-        # Try primary model (IDM-VTON)
-        try:
-            result_url = await self._run_prediction(
-                model_id=self._primary_model,
-                human_image_url=human_image_url,
-                garment_image_url=garment_image_url,
-                category=category,
-                garment_description=garment_description,
-                breaker=self._breaker_primary,
-            )
-            model_used = self._primary_model
-        except Exception as primary_exc:
-            logger.warning(
-                "synthesis.primary_failed",
-                model=self._primary_model,
-                error=str(primary_exc),
-            )
-            # Fallback to Flux-VTON
+        fashn_error = None
+        result_url = None
+        model_used = None
+
+        # ── Provider 1: Fashn.ai (primary) ───────────────────────
+        if self._fashn:
+            try:
+                result_url = await self._fashn.try_on(
+                    human_image_url=human_image_url,
+                    garment_image_url=garment_image_url,
+                    category=category,
+                )
+                model_used = "fashn/tryon-v1.6"
+            except Exception as exc:
+                fashn_error = exc
+                logger.warning(
+                    "synthesis.fashn_failed",
+                    error=str(exc),
+                )
+
+        # ── Provider 2: Replicate IDM-VTON ───────────────────────
+        if result_url is None:
             try:
                 result_url = await self._run_prediction(
-                    model_id=self._fallback_model,
+                    model_id=self._primary_model,
                     human_image_url=human_image_url,
                     garment_image_url=garment_image_url,
                     category=category,
                     garment_description=garment_description,
-                    breaker=self._breaker_fallback,
+                    breaker=self._breaker_primary,
                 )
-                model_used = self._fallback_model
-            except Exception as fallback_exc:
-                logger.error(
-                    "synthesis.all_models_failed",
-                    primary_error=str(primary_exc),
-                    fallback_error=str(fallback_exc),
+                model_used = self._primary_model
+            except Exception as primary_exc:
+                logger.warning(
+                    "synthesis.primary_failed",
+                    model=self._primary_model,
+                    error=str(primary_exc),
                 )
-                raise RuntimeError(
-                    "All VTO synthesis models are unavailable. Please try again later."
-                ) from fallback_exc
+                # ── Provider 3: Replicate Flux-VTON (fallback) ───
+                try:
+                    result_url = await self._run_prediction(
+                        model_id=self._fallback_model,
+                        human_image_url=human_image_url,
+                        garment_image_url=garment_image_url,
+                        category=category,
+                        garment_description=garment_description,
+                        breaker=self._breaker_fallback,
+                    )
+                    model_used = self._fallback_model
+                except Exception as fallback_exc:
+                    logger.error(
+                        "synthesis.all_models_failed",
+                        fashn_error=str(fashn_error) if fashn_error else None,
+                        primary_error=str(primary_exc),
+                        fallback_error=str(fallback_exc),
+                    )
+                    raise RuntimeError(
+                        "All VTO synthesis models are unavailable. Please try again later."
+                    ) from fallback_exc
 
         # CRITICAL: Snapshot to Supabase
         path = StorageService.generate_path(user_id, job_id, "tryon_photo.png")
@@ -251,7 +275,10 @@ class SynthesisService:
 
     # ── Health ───────────────────────────────────────────────────────
     def get_circuit_states(self) -> dict:
-        return {
-            "idm_vton": str(self._breaker_primary.current_state),
-            "flux_vton": str(self._breaker_fallback.current_state),
+        states = {
+            "replicate_idm_vton": str(self._breaker_primary.current_state),
+            "replicate_flux_vton": str(self._breaker_fallback.current_state),
         }
+        if self._fashn:
+            states.update(self._fashn.get_circuit_states())
+        return states

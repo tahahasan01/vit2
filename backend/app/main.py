@@ -30,6 +30,7 @@ from app.middleware.rate_limit import RateLimitMiddleware
 from app.routers import auth_router, garments_router, health_router, tryon_router
 from app.services.auth_service import AuthService
 from app.services.body_estimation_service import BodyEstimationService
+from app.services.fashn_service import FashnService
 from app.services.storage_service import StorageService
 from app.services.synthesis_service import SynthesisService
 from app.services.video_service import VideoService
@@ -82,8 +83,21 @@ async def lifespan(app: FastAPI):
     storage = StorageService(settings, http_client)
     auth_service = AuthService(settings, http_client)
     body_estimation = BodyEstimationService(settings, http_client)
-    synthesis = SynthesisService(settings, http_client, storage)
-    video_service = VideoService(settings, http_client, storage)
+
+    # Fashn.ai (primary VTO provider) — only if API key is configured
+    fashn_service = None
+    if settings.fashn.api_key:
+        fashn_service = FashnService(settings, http_client)
+        logger.info("app.fashn_enabled")
+    else:
+        logger.info("app.fashn_disabled", reason="no API key")
+
+    synthesis = SynthesisService(
+        settings, http_client, storage, fashn_service=fashn_service
+    )
+    video_service = VideoService(
+        settings, http_client, storage, fashn_service=fashn_service
+    )
 
     app.state.storage_service = storage
     app.state.auth_service = auth_service

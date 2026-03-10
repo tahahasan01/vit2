@@ -2,12 +2,14 @@ import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTryOnStore } from '@/stores/useTryOnStore';
+import { useAuthStore } from '@/stores/useAuthStore';
 import { useConsent } from '@/hooks/useConsent';
 import { useTryOnRealtime } from '@/hooks/useTryOnRealtime';
 import GarmentCatalog from './GarmentCatalog';
 import ProgressTracker from './ProgressTracker';
 import ViewModeSwitcher from './ViewModeSwitcher';
 import ConsentModal from './ConsentModal';
+import AuthModal from './AuthModal';
 import Scene from '@/components/viewer/Scene';
 import PhotoView from '@/components/viewer/PhotoView';
 import VideoPlayer from '@/components/viewer/VideoPlayer';
@@ -20,6 +22,9 @@ export default function TryOnFlow() {
   const [step, setStep] = useState<FlowStep>('select-garment');
   const [error, setError] = useState<string | null>(null);
   const [showConsent, setShowConsent] = useState(false);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+
+  const user = useAuthStore((s) => s.user);
 
   const {
     selectedGarmentId,
@@ -62,6 +67,11 @@ export default function TryOnFlow() {
 
   /* ─── Start pipeline ─── */
   const handleStartTryOn = async () => {
+    if (!user) {
+      setShowAuthPrompt(true);
+      return;
+    }
+
     if (needsConsent) {
       setShowConsent(true);
       return;
@@ -84,6 +94,13 @@ export default function TryOnFlow() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* Auth prompt modal */}
+      <AnimatePresence>
+        {showAuthPrompt && (
+          <AuthModal onClose={() => setShowAuthPrompt(false)} />
+        )}
+      </AnimatePresence>
+
       {/* Consent modal */}
       <AnimatePresence>
         {showConsent && (
@@ -120,7 +137,13 @@ export default function TryOnFlow() {
 
             <div className="flex justify-center">
               <button
-                onClick={() => selectedGarmentId && setStep('upload-photo')}
+                onClick={() => {
+                  if (!user) {
+                    setShowAuthPrompt(true);
+                    return;
+                  }
+                  if (selectedGarmentId) setStep('upload-photo');
+                }}
                 disabled={!selectedGarmentId}
                 className="px-8 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 disabled:opacity-30 disabled:cursor-not-allowed text-white font-semibold transition-colors"
               >

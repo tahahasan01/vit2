@@ -58,6 +58,15 @@ class RedisSettings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
+class FashnSettings(BaseSettings):
+    api_key: str = Field("", alias="FASHN_API_KEY")
+    base_url: str = Field("https://api.fashn.ai", alias="FASHN_BASE_URL")
+    tryon_model: str = Field("tryon-v1.6", alias="FASHN_TRYON_MODEL")
+    video_model: str = Field("image-to-video", alias="FASHN_VIDEO_MODEL")
+
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
+
 class PipelineSettings(BaseSettings):
     hmr_space_url: str = Field(
         "https://brjathu-hmr2-0.hf.space", alias="HMR_SPACE_URL"
@@ -92,6 +101,7 @@ class Settings(BaseSettings):
     # Sub-configs (composed)
     supabase: SupabaseSettings = Field(default_factory=SupabaseSettings)
     replicate: ReplicateSettings = Field(default_factory=ReplicateSettings)
+    fashn: FashnSettings = Field(default_factory=FashnSettings)
     redis: RedisSettings = Field(default_factory=RedisSettings)
     pipeline: PipelineSettings = Field(default_factory=PipelineSettings)
 

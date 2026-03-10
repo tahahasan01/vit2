@@ -36,7 +36,7 @@ class VideoService:
 
     Dual-output pipeline:
     - TRELLIS: Single image → textured 3D .glb mesh (for R3F interactive viewer)
-    - Wan 2.2 I2V: Single image → orbital rotation video (for My Looks playback)
+    - Fashn image-to-video (PRIMARY) / Wan 2.2 I2V (FALLBACK): orbital rotation video
     """
 
     def __init__(
@@ -44,10 +44,12 @@ class VideoService:
         settings: Settings,
         http_client: httpx.AsyncClient,
         storage: StorageService,
+        fashn_service=None,
     ):
         self._settings = settings
         self._http = http_client
         self._storage = storage
+        self._fashn = fashn_service
         self._replicate_token = settings.replicate.api_token
         self._trellis_model = settings.replicate.trellis_model_id
         self._video_model = settings.replicate.video_model_id
@@ -180,7 +182,29 @@ class VideoService:
     async def _generate_video(
         self, photo_url: str, user_id: str, job_id: str
     ) -> Optional[str]:
-        """Generate 360° orbital rotation video via Wan 2.2 I2V on Replicate."""
+        """Generate 360° orbital rotation video. Fashn primary, Wan 2.2 fallback."""
+        # ── Try Fashn image-to-video first ───────────────────────
+        if self._fashn:
+            try:
+                video_url = await self._fashn.image_to_video(photo_url)
+                if video_url:
+                    path = StorageService.generate_path(user_id, job_id, "rotation.mp4")
+                    permanent_url = await self._storage.snapshot_external_url(
+                        external_url=video_url,
+                        bucket="tryon-results",
+                        path=path,
+                        content_type="video/mp4",
+                    )
+                    logger.info("video_service.fashn_video_generated", job_id=job_id)
+                    return permanent_url
+            except Exception as exc:
+                logger.warning(
+                    "video_service.fashn_video_failed",
+                    error=str(exc),
+                    job_id=job_id,
+                )
+
+        # ── Fallback: Wan 2.2 I2V on Replicate ──────────────────
         try:
             headers = {
                 "Authorization": f"Bearer {self._replicate_token}",
@@ -283,7 +307,10 @@ class VideoService:
 
     # ── Health ───────────────────────────────────────────────────────
     def get_circuit_states(self) -> dict:
-        return {
-            "trellis": str(self._breaker_trellis.current_state),
-            "wan_video": str(self._breaker_video.current_state),
+        states = {
+            "replicate_trellis": str(self._breaker_trellis.current_state),
+            "replicate_wan_video": str(self._breaker_video.current_state),
         }
+        if self._fashn:
+            states.update(self._fashn.get_circuit_states())
+        return states

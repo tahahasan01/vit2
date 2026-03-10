@@ -35,6 +35,8 @@ async def health_check(request: Request):
 
     # Map each known service
     service_defs = {
+        "fashn_tryon": "fashn_vto",
+        "fashn_video": "fashn_video",
         "replicate_idm_vton": "replicate_vto",
         "replicate_flux_vton": "replicate_vto_fallback",
         "replicate_trellis": "replicate_3d",

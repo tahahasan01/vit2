@@ -1,14 +1,45 @@
-import { useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { useTryOnStore } from '@/stores/useTryOnStore';
+import { useAuthStore } from '@/stores/useAuthStore';
+import AuthModal from './AuthModal';
 
 export default function MyLooks() {
   const { history, historyLoading, fetchHistory, deleteLook } =
     useTryOnStore();
+  const user = useAuthStore((s) => s.user);
+  const [showAuth, setShowAuth] = useState(false);
 
   useEffect(() => {
-    fetchHistory();
-  }, [fetchHistory]);
+    if (user) fetchHistory();
+  }, [user, fetchHistory]);
+
+  // Auth gate
+  if (!user) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-16 text-center">
+        <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center">
+          <svg className="w-8 h-8 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+          </svg>
+        </div>
+        <h2 className="text-3xl font-bold font-display mb-3">My Looks</h2>
+        <p className="text-white/40 text-lg mb-6">
+          Sign in to save and view your virtual try-on history.
+        </p>
+        <button
+          onClick={() => setShowAuth(true)}
+          className="px-6 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-semibold transition-colors"
+        >
+          Sign In to Continue
+        </button>
+        <AnimatePresence>
+          {showAuth && <AuthModal onClose={() => setShowAuth(false)} />}
+        </AnimatePresence>
+      </div>
+    );
+  }
 
   if (historyLoading) {
     return (
@@ -28,11 +59,17 @@ export default function MyLooks() {
 
   if (history.length === 0) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-8 text-center">
+      <div className="max-w-7xl mx-auto px-4 py-16 text-center">
         <h2 className="text-3xl font-bold font-display mb-4">My Looks</h2>
-        <p className="text-white/40 text-lg">
+        <p className="text-white/40 text-lg mb-6">
           No looks yet. Start a virtual try-on to see your looks here.
         </p>
+        <Link
+          to="/"
+          className="inline-flex px-6 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-semibold transition-colors"
+        >
+          Start a Try-On
+        </Link>
       </div>
     );
   }

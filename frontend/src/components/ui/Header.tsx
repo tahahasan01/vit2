@@ -33,13 +33,14 @@ export default function Header() {
           <nav className="hidden md:flex items-center gap-1">
             {NAV_ITEMS.map((item) => {
               const isActive = location.pathname === item.path;
+              const needsAuth = item.path === '/my-looks' && !user;
               return (
                 <Link
                   key={item.path}
                   to={item.path}
                   className={`
                     relative px-4 py-2 rounded-lg text-sm font-medium transition-colors
-                    ${isActive ? 'text-white' : 'text-white/40 hover:text-white/70'}
+                    ${needsAuth ? 'text-white/20 cursor-default' : isActive ? 'text-white' : 'text-white/40 hover:text-white/70'}
                   `}
                 >
                   {isActive && (
