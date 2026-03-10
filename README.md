@@ -1,6 +1,6 @@
 <div align="center">
 
-# ✨ VIT — AI Virtual Try-On
+# VIT — AI Virtual Try-On
 
 **Upload a photo. Pick a garment. Get a photorealistic try-on in seconds.**
 **Photo · 3D Mesh · 360° Video — all from a single pipeline.**
@@ -21,21 +21,21 @@
 
 ---
 
-## 🎯 What It Does
+## What It Does
 
 A production-grade **AI virtual try-on platform** that lets any e-commerce brand offer:
 
-1. **📸 Photorealistic Try-On** — AI composites a garment onto the user's photo
-2. **🧊 3D Mesh Viewer** — Interactive `.glb` model with orbit controls, PBR materials, and contact shadows
-3. **🎬 360° Orbital Video** — Auto-generated MP4 showing the garment from every angle
+1. **Photorealistic Try-On** — AI composites a garment onto the user's photo
+2. **3D Mesh Viewer** — Interactive `.glb` model with orbit controls, PBR materials, and contact shadows
+3. **360° Orbital Video** — Auto-generated MP4 showing the garment from every angle
 
 > **Pipeline cost:** ~$0.09/run &nbsp;·&nbsp; **Latency:** ~70 seconds &nbsp;·&nbsp; **3-tier AI failover** for 99.9% uptime
 
 ---
 
-## 🛠️ Frameworks & Technologies
+## Frameworks & Technologies
 
-### ⚛️ Frontend
+### Frontend
 
 ```
 React 18.3           →  Component architecture + hooks
@@ -52,7 +52,7 @@ ESLint 9.13          →  Code quality enforcement
 PostCSS 8.4          →  CSS transforms + Autoprefixer 10.4
 ```
 
-### 🧊 3D Engine
+### 3D Engine
 
 ```
 Three.js 0.170             →  WebGL rendering engine
@@ -62,7 +62,7 @@ React Three Postprocessing  →  SMAA anti-aliasing (quality-adaptive)
   2.16
 ```
 
-### ⚡ Backend
+### Backend
 
 ```
 Python 3.12          →  Runtime
@@ -79,7 +79,7 @@ Pillow 11.1          →  Image processing + resizing
 MediaPipe 0.10       →  On-device body landmark estimation
 ```
 
-### 🤖 AI / ML Providers
+### AI / ML Providers
 
 ```
 Fashn.ai tryon-v1.6       →  Primary garment synthesis (VTO)
@@ -91,7 +91,7 @@ Replicate Wan 2.2 I2V     →  Fallback 360° video
 HuggingFace HMR 2.0       →  Full-body pose estimation
 ```
 
-### 🏗️ Infrastructure
+### Infrastructure
 
 ```
 Docker Compose       →  4-service orchestration (redis · backend · worker · frontend)
@@ -101,7 +101,7 @@ Supabase             →  Auth · Postgres · Storage (signed URLs) · Realtime 
 
 ---
 
-## 🏛️ Architecture
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -138,11 +138,11 @@ Supabase             →  Auth · Postgres · Storage (signed URLs) · Realtime 
 
 | # | Layer | Service |
 |---|-------|---------|
-| 1 | 🦴 Body Estimation | MediaPipe (local) → HMR 2.0 (HuggingFace) |
-| 2 | 👕 Garment Synthesis | Fashn.ai → IDM-VTON → Flux-VTON |
-| 3 | 🎬 360° Rendering | TRELLIS (.glb) + Fashn/Wan 2.2 I2V (.mp4) |
-| 4 | ⚡ Async Infra | ARQ + Redis + Supabase Realtime |
-| 5 | 🔒 Privacy | GDPR consent flow + Supabase RLS |
+| 1 | Body Estimation | MediaPipe (local) → HMR 2.0 (HuggingFace) |
+| 2 | Garment Synthesis | Fashn.ai → IDM-VTON → Flux-VTON |
+| 3 | 360° Rendering | TRELLIS (.glb) + Fashn/Wan 2.2 I2V (.mp4) |
+| 4 | Async Infra | ARQ + Redis + Supabase Realtime |
+| 5 | Privacy | GDPR consent flow + Supabase RLS |
 
 ### Provider Failover Chain
 
@@ -156,11 +156,11 @@ Each provider has its own **circuit breaker** (pybreaker) — 3 failures trips t
 
 ---
 
-## ✨ Animations & Visual Effects
+## Animations & Visual Effects
 
 The UI is built with **60fps choreographed motion** using Framer Motion spring physics, Three.js real-time 3D, and custom CSS.
 
-### 🎭 Framer Motion — Spring Physics
+### Framer Motion — Spring Physics
 
 #### Page & Component Entrances
 
@@ -183,7 +183,7 @@ The UI is built with **60fps choreographed motion** using Framer Motion spring p
 | **Delete overlay** | My Looks hover | `opacity: 0→1` · `300ms` CSS |
 | **Error slide-in** | Progress tracker | `opacity + y: -8→0` |
 
-#### 🧲 Shared Layout Animations (`layoutId`)
+#### Shared Layout Animations (`layoutId`)
 
 Three spring-physics pill indicators that **slide smoothly** between active states:
 
@@ -195,22 +195,22 @@ Three spring-physics pill indicators that **slide smoothly** between active stat
 
 > All use `type: 'spring'` · `bounce: 0.2` · `duration: 0.4s` for a consistent, snappy feel.
 
-#### 🎬 AnimatePresence — Exit Animations
+#### AnimatePresence — Exit Animations
 
 Modals (`AuthModal`, `ConsentModal`) mount/unmount with:
 - **Enter:** `scale: 0.9→1` · `opacity: 0→1`
 - **Exit:** reverse with automatic cleanup
 
-### 🌊 CSS Animations & Keyframes
+### CSS Animations & Keyframes
 
 | Effect | Details |
 |--------|---------|
-| **🔄 Progress bar stripes** | `@keyframes stripe-move` — 45° diagonal stripes scrolling infinitely at 0.5s |
-| **💜 Pulsing step dot** | `scale: [1 → 1.3 → 1]` at 1s repeat on active pipeline step |
-| **✨ Slow pulse glow** | `pulse-slow` — 3s `cubic-bezier(0.4, 0, 0.6, 1)` breathing |
-| **🌀 Slow spin** | `spin-slow` — 8s linear infinite rotation |
+| **Progress bar stripes** | `@keyframes stripe-move` — 45° diagonal stripes scrolling infinitely at 0.5s |
+| **Pulsing step dot** | `scale: [1 → 1.3 → 1]` at 1s repeat on active pipeline step |
+| **Slow pulse glow** | `pulse-slow` — 3s `cubic-bezier(0.4, 0, 0.6, 1)` breathing |
+| **Slow spin** | `spin-slow` — 8s linear infinite rotation |
 
-### 🪟 Glass Morphism & Visual Effects
+### Glass Morphism & Visual Effects
 
 | Effect | Implementation |
 |--------|---------------|
@@ -224,7 +224,7 @@ Modals (`AuthModal`, `ConsentModal`) mount/unmount with:
 
 ---
 
-## 🧊 Three.js 3D Viewer
+## Three.js 3D Viewer
 
 Interactive `.glb` mesh rendering with physically-based materials inside a React Three Fiber `<Canvas>`.
 
@@ -250,11 +250,11 @@ Interactive `.glb` mesh rendering with physically-based materials inside a React
 
 | Light | Intensity | Notes |
 |-------|-----------|-------|
-| 🌍 Environment (preset) | 1.0 | Global IBL |
-| 💡 Ambient | 0.3 | Soft fill |
-| ☀️ Key directional | 0.8 | `[5,5,5]` — 1024² shadow map |
-| 🌙 Fill directional | 0.3 | `[-3,3,-3]` — no shadows |
-| 🟫 Contact shadows | 0.4 opacity | Ground plane, blur: 2 |
+| Environment (preset) | 1.0 | Global IBL |
+| Ambient | 0.3 | Soft fill |
+| Key directional | 0.8 | `[5,5,5]` — 1024² shadow map |
+| Fill directional | 0.3 | `[-3,3,-3]` — no shadows |
+| Contact shadows | 0.4 opacity | Ground plane, blur: 2 |
 
 ### GLB Processing Pipeline
 
@@ -278,7 +278,7 @@ Load .glb (useGLTF)
 
 ---
 
-## 🎨 Design System
+## Design System
 
 ### Color Palette
 
@@ -296,7 +296,7 @@ Load .glb (useGLTF)
 
 ---
 
-## 🔌 API Reference
+## API Reference
 
 ### Auth
 
@@ -304,8 +304,8 @@ Load .glb (useGLTF)
 |--------|----------|------|-------------|
 | `POST` | `/api/v1/auth/signup` | — | Create account |
 | `POST` | `/api/v1/auth/login` | — | Sign in |
-| `POST` | `/api/v1/auth/logout` | 🔒 | Sign out |
-| `POST` | `/api/v1/auth/consent` | 🔒 | GDPR consent (`consent_given` + `privacy_acknowledged`) |
+| `POST` | `/api/v1/auth/logout` | Bearer | Sign out |
+| `POST` | `/api/v1/auth/consent` | Bearer | GDPR consent (`consent_given` + `privacy_acknowledged`) |
 
 ### Garments
 
@@ -313,16 +313,16 @@ Load .glb (useGLTF)
 |--------|----------|------|-------------|
 | `GET` | `/api/v1/garments` | — | List garments (filter by `category`) |
 | `GET` | `/api/v1/garments/{id}` | — | Single garment |
-| `POST` | `/api/v1/garments` | 🔒 | Upload new garment (admin) |
+| `POST` | `/api/v1/garments` | Bearer | Upload new garment (admin) |
 
 ### Try-On
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
-| `POST` | `/api/v1/tryon` | 🔒 | Start pipeline (multipart: `selfie` + `fullbody` + `garment_id`) |
-| `GET` | `/api/v1/tryon/{job_id}` | 🔒 | Poll job status |
-| `GET` | `/api/v1/tryon/history` | 🔒 | User's looks (returns `looks[]`) |
-| `DELETE` | `/api/v1/tryon/{job_id}` | 🔒 | Delete a look |
+| `POST` | `/api/v1/tryon` | Bearer | Start pipeline (multipart: `selfie` + `fullbody` + `garment_id`) |
+| `GET` | `/api/v1/tryon/{job_id}` | Bearer | Poll job status |
+| `GET` | `/api/v1/tryon/history` | Bearer | User's looks (returns `looks[]`) |
+| `DELETE` | `/api/v1/tryon/{job_id}` | Bearer | Delete a look |
 
 ### System
 
@@ -333,7 +333,7 @@ Load .glb (useGLTF)
 
 ---
 
-## 🗄️ Database Schema
+## Database Schema
 
 ```sql
 -- Auth: Supabase Auth (auth.users)
@@ -355,7 +355,7 @@ tryon_jobs (
 
 ---
 
-## 🐳 Docker
+## Docker
 
 4 services orchestrated with Docker Compose:
 
@@ -376,7 +376,7 @@ tryon_jobs (
 
 ---
 
-## ⚙️ Environment Variables
+## Environment Variables
 
 Copy `.env.example` → `.env`:
 
@@ -395,7 +395,7 @@ Copy `.env.example` → `.env`:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ├── backend/
@@ -443,7 +443,7 @@ Copy `.env.example` → `.env`:
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -482,7 +482,7 @@ docker compose up --build
 
 ---
 
-## 🧠 Design Decisions
+## Design Decisions
 
 | Decision | Why |
 |----------|-----|
@@ -495,6 +495,6 @@ docker compose up --build
 
 ---
 
-## 📄 License
+## License
 
 MIT — Use it for any brand, any store, any project.
