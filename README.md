@@ -1,444 +1,441 @@
-# The Dirty Laundry V2 — AI Virtual Try-On Platform
+<div align="center">
 
-> **Production-grade virtual try-on pipeline** for The Dirty Laundry streetwear brand.
-> Upload a photo, pick a garment, get a photorealistic try-on in seconds — with 360° 3D mesh and orbital video.
+# ✨ VIT — AI Virtual Try-On
 
----
+**Upload a photo. Pick a garment. Get a photorealistic try-on in seconds.**
+**Photo · 3D Mesh · 360° Video — all from a single pipeline.**
 
-## Tech Stack
+![React](https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Three.js](https://img.shields.io/badge/Three.js-0.170-000000?style=for-the-badge&logo=threedotjs&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-11.15-0055FF?style=for-the-badge&logo=framer&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-Auth%20·%20DB%20·%20Realtime-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-7-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 
-### Frontend
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| React | 18.3.1 | Component UI library |
-| TypeScript | 5.6.2 | Static type safety |
-| Vite | 6.0.0 | Build tool + HMR dev server |
-| Three.js | 0.170.0 | WebGL 3D engine |
-| React Three Fiber | 8.17.0 | Declarative R3F wrapper for Three.js |
-| React Three Drei | 9.120.0 | R3F helpers (OrbitControls, ContactShadows, Grid, Environment, useGLTF) |
-| React Three Postprocessing | 2.16.0 | SMAA anti-aliasing post-processing |
-| Framer Motion | 11.15.0 | Spring physics animations + layout transitions |
-| Tailwind CSS | 3.4.17 | Utility-first styling + dark theme tokens |
-| Zustand | 5.0.0 | Lightweight state management |
-| React Router | 6.28.0 | Client-side routing |
-| Axios | 1.7.0 | HTTP client |
-| Supabase JS | 2.47.0 | Auth + Realtime subscriptions |
-| react-dropzone | 14.3.0 | Drag-and-drop file uploads |
-| ESLint | 9.13.0 | Code linting |
-| PostCSS | 8.4.49 | CSS transforms |
-| Autoprefixer | 10.4.20 | Vendor prefix insertion |
-
-### Backend
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Python | 3.12+ | Runtime |
-| FastAPI | 0.115.x | Async REST framework |
-| Uvicorn | 0.34.x | ASGI server |
-| Pydantic | 2.10.x | Data validation + settings |
-| httpx | 0.28.x | Async HTTP client |
-| ARQ | 0.26.x | Async Redis job queue |
-| Redis | 7 Alpine | Queue broker + cache |
-| tenacity | 9.0.x | Retry with exponential backoff |
-| pybreaker | 1.2.x | Circuit breaker pattern |
-| structlog | 24.4.x | Structured JSON logging |
-| Pillow | 11.1.x | Image processing + resizing |
-| MediaPipe | 0.10.x | On-device body landmark estimation |
-
-### AI / ML Providers
-
-| Provider | Model | Purpose |
-|----------|-------|---------|
-| **Fashn.ai** (Primary) | tryon-v1.6 | Virtual garment synthesis |
-| **Fashn.ai** (Primary) | image-to-video | 360° orbital video generation |
-| **Replicate** (Fallback) | IDM-VTON | First garment synthesis fallback |
-| **Replicate** (Fallback) | Flux-VTON | Second garment synthesis fallback |
-| **Replicate** | TRELLIS | 3D `.glb` mesh reconstruction |
-| **Replicate** (Fallback) | Wan 2.2 I2V | Fallback 360° video generation |
-| HuggingFace | HMR 2.0 | Full-body pose estimation |
-
-### Infrastructure
-
-| Technology | Purpose |
-|------------|---------|
-| Docker Compose | Multi-container orchestration (4 services) |
-| Nginx | Reverse proxy + static asset serving + gzip |
-| Supabase | Auth · Postgres · Storage (signed URLs) · Realtime (WebSocket) |
+</div>
 
 ---
 
-## Architecture
+## 🎯 What It Does
+
+A production-grade **AI virtual try-on platform** that lets any e-commerce brand offer:
+
+1. **📸 Photorealistic Try-On** — AI composites a garment onto the user's photo
+2. **🧊 3D Mesh Viewer** — Interactive `.glb` model with orbit controls, PBR materials, and contact shadows
+3. **🎬 360° Orbital Video** — Auto-generated MP4 showing the garment from every angle
+
+> **Pipeline cost:** ~$0.09/run &nbsp;·&nbsp; **Latency:** ~70 seconds &nbsp;·&nbsp; **3-tier AI failover** for 99.9% uptime
+
+---
+
+## 🛠️ Frameworks & Technologies
+
+### ⚛️ Frontend
+
+```
+React 18.3           →  Component architecture + hooks
+TypeScript 5.6       →  End-to-end type safety
+Vite 6.0             →  Sub-second HMR + optimized builds
+Tailwind CSS 3.4     →  Utility-first dark theme with custom tokens
+Framer Motion 11.15  →  Spring physics animations + layout transitions
+Zustand 5.0          →  Minimal global state (auth, tryon, viewer stores)
+React Router 6.28    →  Client-side routing with auth guards
+Axios 1.7            →  HTTP client with interceptors
+react-dropzone 14.3  →  Drag-and-drop photo uploads
+Supabase JS 2.47     →  Auth + Realtime WebSocket subscriptions
+ESLint 9.13          →  Code quality enforcement
+PostCSS 8.4          →  CSS transforms + Autoprefixer 10.4
+```
+
+### 🧊 3D Engine
+
+```
+Three.js 0.170             →  WebGL rendering engine
+React Three Fiber 8.17     →  Declarative R3F wrapper
+React Three Drei 9.120     →  OrbitControls · ContactShadows · Grid · Environment · useGLTF
+React Three Postprocessing  →  SMAA anti-aliasing (quality-adaptive)
+  2.16
+```
+
+### ⚡ Backend
+
+```
+Python 3.12          →  Runtime
+FastAPI 0.115        →  Async REST framework + auto-generated OpenAPI docs
+Uvicorn 0.34         →  High-performance ASGI server
+Pydantic 2.10        →  Data validation + settings management
+httpx 0.28           →  Async HTTP client for AI provider calls
+ARQ 0.26             →  Async Redis job queue (background pipeline)
+Redis 7 Alpine       →  Queue broker + result cache (256MB LRU)
+tenacity 9.0         →  Retry with exponential backoff
+pybreaker 1.2        →  Circuit breaker pattern (7 breakers)
+structlog 24.4       →  Structured JSON logging
+Pillow 11.1          →  Image processing + resizing
+MediaPipe 0.10       →  On-device body landmark estimation
+```
+
+### 🤖 AI / ML Providers
+
+```
+Fashn.ai tryon-v1.6       →  Primary garment synthesis (VTO)
+Fashn.ai image-to-video   →  Primary 360° orbital video
+Replicate IDM-VTON        →  1st synthesis fallback
+Replicate Flux-VTON       →  2nd synthesis fallback
+Replicate TRELLIS         →  3D .glb mesh reconstruction
+Replicate Wan 2.2 I2V     →  Fallback 360° video
+HuggingFace HMR 2.0       →  Full-body pose estimation
+```
+
+### 🏗️ Infrastructure
+
+```
+Docker Compose       →  4-service orchestration (redis · backend · worker · frontend)
+Nginx                →  Reverse proxy · gzip · static caching · security headers
+Supabase             →  Auth · Postgres · Storage (signed URLs) · Realtime (WebSocket)
+```
+
+---
+
+## 🏛️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Frontend (Vite + React)                  │
+│                     Frontend  (Vite + React)                    │
+│                                                                 │
 │   HeroLanding → GarmentCatalog → PhotoUpload → Result Viewer   │
-│   Three.js 3D · VideoPlayer · Zustand stores · Framer Motion   │
+│   Three.js 3D  ·  Framer Motion  ·  Zustand  ·  Tailwind CSS  │
 └────────────────────────────┬────────────────────────────────────┘
-                             │ REST / Realtime
+                             │  REST + Supabase Realtime
 ┌────────────────────────────▼────────────────────────────────────┐
-│                    FastAPI Backend (:8000)                       │
-│  /auth  /tryon  /garments  /health  /metrics                    │
-│  Middleware: CORS · Rate-Limit · Logging · Auth                 │
+│                   FastAPI Backend  (:8000)                       │
+│                                                                 │
+│   /auth   /tryon   /garments   /health   /metrics               │
+│   CORS  ·  Rate-Limit  ·  Structured Logging  ·  Auth Guard    │
 └───────┬──────────┬──────────┬──────────┬───────────────────────┘
         │          │          │          │
-   ┌────▼───┐ ┌───▼────┐ ┌──▼───┐ ┌───▼──────────┐
-   │Supabase│ │  Redis  │ │Fashn │ │  Replicate   │
-   │Auth/DB │ │  Queue  │ │ .ai  │ │  (fallback)  │
-   │Storage │ │  (ARQ)  │ │PRIMARY│ │IDM/Flux/Wan │
-   └────────┘ └───┬─────┘ └──────┘ └──────────────┘
-                  │
-            ┌─────▼──────┐
-            │ ARQ Worker  │
-            │ Pipeline:   │
-            │ Body Est →  │
-            │ Synthesis → │
-            │ 360° Video  │
-            └─────────────┘
+   ┌────▼───┐ ┌───▼────┐ ┌──▼──────┐ ┌▼──────────────┐
+   │Supabase│ │ Redis  │ │ Fashn   │ │  Replicate    │
+   │Auth/DB │ │ Queue  │ │  .ai    │ │  (fallback)   │
+   │Storage │ │ (ARQ)  │ │ PRIMARY │ │ IDM/Flux/Wan  │
+   └────────┘ └──┬─────┘ └─────────┘ └───────────────┘
+                 │
+           ┌─────▼──────┐
+           │ ARQ Worker  │
+           │             │
+           │ Body Est  → │
+           │ Synthesis → │
+           │ 3D Mesh   → │
+           │ 360° Video  │
+           └─────────────┘
 ```
 
 ### 5-Layer Pipeline
 
-| Layer | Component | Service |
-|-------|-----------|---------|
-| 1 | Body Estimation | MediaPipe (local) → HMR 2.0 (HuggingFace) |
-| 2 | Garment Synthesis | Fashn.ai (primary) → IDM-VTON → Flux-VTON |
-| 3 | 360° Rendering | TRELLIS (.glb mesh) + Fashn/Wan 2.2 I2V (MP4 video) |
-| 4 | Async Infrastructure | ARQ + Redis + Supabase Realtime |
-| 5 | Privacy & Consent | GDPR consent flow + Supabase RLS |
+| # | Layer | Service |
+|---|-------|---------|
+| 1 | 🦴 Body Estimation | MediaPipe (local) → HMR 2.0 (HuggingFace) |
+| 2 | 👕 Garment Synthesis | Fashn.ai → IDM-VTON → Flux-VTON |
+| 3 | 🎬 360° Rendering | TRELLIS (.glb) + Fashn/Wan 2.2 I2V (.mp4) |
+| 4 | ⚡ Async Infra | ARQ + Redis + Supabase Realtime |
+| 5 | 🔒 Privacy | GDPR consent flow + Supabase RLS |
 
-**Total pipeline cost:** ~$0.09/run | **Latency:** ~70 seconds
+### Provider Failover Chain
 
-### Provider Chain (3-tier Failover)
+```
+Garment Synthesis:   Fashn.ai tryon-v1.6  →  IDM-VTON  →  Flux-VTON
+360° Video:          Fashn.ai I2V         →  Wan 2.2 I2V
+3D Mesh:             TRELLIS              →  .glb for Three.js
+```
 
-**Garment Synthesis (VTO):**
-1. **Fashn.ai tryon-v1.6** — Primary (if `FASHN_API_KEY` configured)
-2. **Replicate IDM-VTON** — First fallback
-3. **Replicate Flux-VTON** — Second fallback
-
-**360° Video:**
-1. **Fashn.ai image-to-video** — Primary
-2. **Replicate Wan 2.2 I2V** — Fallback
-
-**3D Mesh:** Replicate TRELLIS → `.glb` for Three.js viewer
-
-### Circuit Breakers (pybreaker)
-
-| Breaker | Fail Max | Reset Timeout | Purpose |
-|---------|----------|---------------|---------|
-| `fashn_tryon` | 3 | 60s | Fashn VTO |
-| `fashn_video` | 3 | 120s | Fashn video |
-| `replicate_idm_vton` | 3 | 60s | IDM-VTON |
-| `replicate_flux_vton` | 3 | 60s | Flux-VTON |
-| `replicate_trellis` | 3 | 120s | TRELLIS 3D |
-| `replicate_wan_video` | 3 | 120s | Wan 2.2 video |
-| `hmr_body_estimation` | 3 | 60s | HMR 2.0 body |
+Each provider has its own **circuit breaker** (pybreaker) — 3 failures trips the breaker, auto-recovery after 60–120s.
 
 ---
 
-## Frontend UX Flow
+## ✨ Animations & Visual Effects
 
-### Guest (Not Signed In)
-```
-HeroLanding → "Get Started" (sign-in modal)  or  "Browse Collection" (catalog only)
-```
-- Full-screen hero with gradient headline, animated badge, feature pills
-- "My Looks" nav item is dimmed
-- Clicking "Continue with Selected" or "Start Try-On" prompts sign-in
+The UI is built with **60fps choreographed motion** using Framer Motion spring physics, Three.js real-time 3D, and custom CSS.
 
-### Authenticated User
-```
-GarmentCatalog → Photo Upload → Processing (realtime) → Result (Photo / 3D / 360°)
-```
-- Full 4-step pipeline access
-- My Looks history with hover overlays
-- Empty state links to "Start a Try-On"
+### 🎭 Framer Motion — Spring Physics
 
----
+#### Page & Component Entrances
 
-## Animations & Transitions
+| Animation | Where | Config |
+|-----------|-------|--------|
+| **Fade-up entrance** | Hero, cards, grids | `opacity: 0→1` · `y: 30→0` · `0.7s easeOut` |
+| **Staggered cards** | Garment grid, My Looks | `delay: idx × 0.05` · `opacity + y` slide |
+| **Scale-in badge** | Hero status badge | `scale: 0.9→1` · `delay: 0.2s` |
+| **Feature pills** | Hero section | `opacity: 0→1` · `delay: 0.5s` |
+| **Partial result pop** | Processing step | `scale: 0.95→1` · `opacity: 0→1` |
+| **Image/Video reveal** | Photo viewer, 360° player | `opacity: 0→1` · `0.5s` |
 
-The entire UI is choreographed with **Framer Motion 11.15** spring physics, **Three.js** real-time 3D, and custom **CSS keyframes**.
+#### Interactive Feedback
 
-### Framer Motion Animations
+| Animation | Where | Config |
+|-----------|-------|--------|
+| **Button press** | CTA buttons | `hover: scale 1.03` · `tap: scale 0.97` |
+| **Selection check** | Garment card | `scale: 0→1` spring pop |
+| **Dropdown slide** | User menu | `y: -8→0` · `AnimatePresence` exit |
+| **Delete overlay** | My Looks hover | `opacity: 0→1` · `300ms` CSS |
+| **Error slide-in** | Progress tracker | `opacity + y: -8→0` |
 
-| Component | Animation | Config |
-|-----------|-----------|--------|
-| **HeroLanding** | Container fade-in + slide-up | `opacity: 0→1, y: 30→0` · `duration: 0.7s, ease: easeOut` |
-| **HeroLanding** | Badge zoom-in | `scale: 0.9→1, opacity: 0→1` · `delay: 0.2s` |
-| **HeroLanding** | Feature pills fade-in | `opacity: 0→1` · `delay: 0.5s` |
-| **HeroLanding** | CTA button press | `whileHover: scale 1.03` · `whileTap: scale 0.97` |
-| **Header** | Nav pill indicator | `layoutId="nav-pill"` · `spring, bounce: 0.2, duration: 0.4s` |
-| **Header** | User dropdown | `opacity: 0→1, y: -8→0` · `AnimatePresence` exit |
-| **AuthModal** | Tab indicator | `layoutId="auth-tab"` · `spring, bounce: 0.2, duration: 0.4s` |
-| **AuthModal** | Modal overlay | `scale: 0.9→1, opacity: 0→1` · `AnimatePresence` |
-| **ConsentModal** | Modal entry | `scale: 0.9→1, opacity: 0→1` · `AnimatePresence` |
-| **GarmentCatalog** | Card entrances | Staggered `delay: idx * 0.05` · `opacity: 0→1, y: 20→0` |
-| **GarmentCatalog** | Selection checkmark | `scale: 0→1` · spring animation |
-| **MyLooks** | History card grid | Staggered `delay: idx * 0.05` · `opacity: 0→1, y: 20→0` |
-| **MyLooks** | Delete/hover overlays | `opacity: 0→1` · CSS `duration: 300ms` |
-| **ViewModeSwitcher** | Tab active pill | `layoutId="viewmode-pill"` · `spring, bounce: 0.2, duration: 0.4s` |
-| **ProgressTracker** | Progress bar fill | `width: 0→{progress}%` · `duration: 0.5s, ease: easeOut` |
-| **ProgressTracker** | Active step pulse | `scale: [1, 1.3, 1]` · `duration: 1s, repeat: Infinity` |
-| **ProgressTracker** | Error message | `opacity: 0→1, y: -8→0` |
-| **TryOnFlow** | Partial result appear | `scale: 0.95→1, opacity: 0→1` |
-| **PhotoView** | Image fade-in | `opacity: 0→1` · `duration: 0.5s` |
-| **VideoPlayer** | Video fade-in | `opacity: 0→1` · `duration: 0.5s` |
+#### 🧲 Shared Layout Animations (`layoutId`)
 
-### Layout Animations (Shared Layout)
+Three spring-physics pill indicators that **slide smoothly** between active states:
 
-Three `layoutId`-driven pill indicators provide smooth spring-physics sliding between active states:
+| `layoutId` | Component | Tabs |
+|------------|-----------|------|
+| `nav-pill` | Header nav | Catalog · Try On · My Looks |
+| `auth-tab` | Auth modal | Sign In · Sign Up |
+| `viewmode-pill` | Result viewer | Photo · 3D · 360° |
 
-- **`nav-pill`** — Header navigation (Catalog / Try On / My Looks)
-- **`auth-tab`** — Auth modal (Sign In / Sign Up)
-- **`viewmode-pill`** — Result viewer (Photo / 3D / 360°)
+> All use `type: 'spring'` · `bounce: 0.2` · `duration: 0.4s` for a consistent, snappy feel.
 
-All use `type: 'spring', bounce: 0.2, duration: 0.4` for consistent feel.
+#### 🎬 AnimatePresence — Exit Animations
 
-### CSS Animations & Effects
+Modals (`AuthModal`, `ConsentModal`) mount/unmount with:
+- **Enter:** `scale: 0.9→1` · `opacity: 0→1`
+- **Exit:** reverse with automatic cleanup
+
+### 🌊 CSS Animations & Keyframes
+
+| Effect | Details |
+|--------|---------|
+| **🔄 Progress bar stripes** | `@keyframes stripe-move` — 45° diagonal stripes scrolling infinitely at 0.5s |
+| **💜 Pulsing step dot** | `scale: [1 → 1.3 → 1]` at 1s repeat on active pipeline step |
+| **✨ Slow pulse glow** | `pulse-slow` — 3s `cubic-bezier(0.4, 0, 0.6, 1)` breathing |
+| **🌀 Slow spin** | `spin-slow` — 8s linear infinite rotation |
+
+### 🪟 Glass Morphism & Visual Effects
 
 | Effect | Implementation |
 |--------|---------------|
-| **Progress bar stripes** | `@keyframes stripe-move` — diagonal stripes scrolling at 0.5s linear infinite |
-| **Active step pulse** | Tailwind `animate-pulse` (3s cubic-bezier cycle) on badge dot |
-| **Slow pulse glow** | Custom `pulse-slow` — `pulse 3s cubic-bezier(0.4,0,0.6,1) infinite` |
-| **Slow spin** | Custom `spin-slow` — `spin 8s linear infinite` |
-| **Glass morphism cards** | `backdrop-blur-xl` + `bg-white/5` + `border-white/10` |
-| **Brand gradient** | `linear-gradient(to right, #c084fc, #9333ea)` (brand-400 → brand-600) |
-| **Glow shadows** | `0 0 40px rgba(168,85,247,0.15)` + `0 0 80px rgba(168,85,247,0.05)` |
-| **Sticky header blur** | `bg-surface-950/80 backdrop-blur-xl border-white/5` |
-| **Custom scrollbar** | 6px width, `rgba(255,255,255,0.15)` track, 3px border-radius |
-| **Dropzone active state** | Border transitions to `brand-400` + `bg-brand-400/5` on drag |
-| **Hero background glows** | 600px + 400px blurred circles (`blur-[120px]`, `blur-[100px]`) |
+| **Glass cards** | `backdrop-blur-xl` · `bg-white/5` · `border-white/10` · `rounded-2xl` |
+| **Purple gradient** | `linear-gradient(→, #c084fc, #9333ea)` |
+| **Glow shadows** | `box-shadow: 0 0 40px rgba(168,85,247,0.15), 0 0 80px rgba(168,85,247,0.05)` |
+| **Sticky header** | `bg-surface-950/80` · `backdrop-blur-xl` · `border-white/5` |
+| **Hero background** | Two blurred circles — 600px `blur-[120px]` + 400px `blur-[100px]` |
+| **Custom scrollbar** | 6px · `rgba(255,255,255,0.15)` · 3px radius |
+| **Dropzone glow** | Border → `brand-400` + `bg-brand-400/5` on active drag |
 
 ---
 
-## Three.js / React Three Fiber — 3D Viewer
+## 🧊 Three.js 3D Viewer
 
-The 3D result viewer renders `.glb` meshes with physically-based materials inside an interactive R3F `<Canvas>`.
+Interactive `.glb` mesh rendering with physically-based materials inside a React Three Fiber `<Canvas>`.
 
-### Scene Configuration
+### Scene Setup
 
-```
-Canvas: antialias · alpha · high-performance · preserveDrawingBuffer
-DPR:    [1, 2] (adaptive pixel ratio)
-Tone:   ACES Filmic (industry-standard color grading)
-Shadows: enabled
-```
+| Config | Value |
+|--------|-------|
+| Antialiasing | Enabled (MSAA + SMAA post-process) |
+| Tone Mapping | ACES Filmic |
+| DPR | `[1, 2]` adaptive |
+| Shadows | Full cascade |
 
-### Camera & Controls
+### Camera & Orbit Controls
 
 | Feature | Value |
 |---------|-------|
-| Type | Perspective (default) |
-| Orbit Controls | Full pan + zoom + rotate |
-| Damping | 0.05 factor (smooth inertia) |
-| Zoom range | 1× – 8× |
-| Vertical limits | 18° min – 153° max (prevents flipping) |
-| Auto-rotate | Optional continuous rotation |
+| Controls | Full pan · zoom · rotate with 0.05 damping |
+| Zoom | 1× – 8× |
+| Vertical | 18° – 153° (prevents flip) |
+| Auto-rotate | Optional continuous spin |
 
-### Lighting Rig
+### Lighting
 
-| Light | Position | Intensity | Shadows |
-|-------|----------|-----------|---------|
-| Environment (preset) | — | 1.0 | — |
-| Ambient | — | 0.3 | — |
-| Directional (key) | `[5, 5, 5]` | 0.8 | 1024×1024 shadow map |
-| Directional (fill) | `[-3, 3, -3]` | 0.3 | — |
-| Contact shadows | Ground plane | 0.4 opacity | blur: 2, scale: 10 |
+| Light | Intensity | Notes |
+|-------|-----------|-------|
+| 🌍 Environment (preset) | 1.0 | Global IBL |
+| 💡 Ambient | 0.3 | Soft fill |
+| ☀️ Key directional | 0.8 | `[5,5,5]` — 1024² shadow map |
+| 🌙 Fill directional | 0.3 | `[-3,3,-3]` — no shadows |
+| 🟫 Contact shadows | 0.4 opacity | Ground plane, blur: 2 |
 
-### GLB Model Processing
+### GLB Processing Pipeline
 
-1. **Auto-centering** — Bounding box calculation → centers to origin
-2. **Normalized scaling** — Scaled to ~2 units height via `2 / maxDimension`
-3. **PBR material upgrade** — All `MeshStandardMaterial` → `MeshPhysicalMaterial`:
-   - Preserves: albedo, normal, roughness, metalness, AO, emissive maps
-   - Adds: clearcoat (0.05), clearcoat roughness (0.3), env map intensity (1.2)
-   - Double-sided rendering, cast + receive shadows
-4. **Idle rotation** — Continuous Y-axis spin at 0.02 rad/frame (~5.2s per revolution)
+```
+Load .glb (useGLTF)
+  → Auto-center via bounding box
+  → Normalize scale to ~2 units height
+  → Upgrade materials: MeshStandard → MeshPhysical
+      + clearcoat: 0.05
+      + clearcoat roughness: 0.3
+      + env map intensity: 1.2
+      + double-sided rendering
+  → Enable cast + receive shadows
+  → Idle Y-axis rotation at 0.02 rad/frame (~5.2s/rev)
+```
 
 ### Post-Processing
 
-- **SMAA** anti-aliasing via `@react-three/postprocessing` (disabled on low-quality setting)
-- Optional infinite grid overlay (0.5-unit cells, 2-unit sections, fade at 10 units)
+- **SMAA** anti-aliasing (disabled on low quality)
+- Optional **infinite grid** (0.5-unit cells, 2-unit sections, 10-unit fade)
 
 ---
 
-## Tailwind CSS Theme
+## 🎨 Design System
 
-### Color System
+### Color Palette
 
-**Brand (Purple):** 50 `#faf5ff` → 500 `#a855f7` → 950 `#3b0764`
-**Surface (Dark):** 50 `#fafafa` → 900 `#171717` → 950 `#0a0a0a`
+| Token | Scale | Usage |
+|-------|-------|-------|
+| `brand` | `#faf5ff` → `#a855f7` → `#3b0764` | Purple accent · gradients · interactive |
+| `surface` | `#fafafa` → `#171717` → `#0a0a0a` | Dark backgrounds · cards · borders |
 
 ### Typography
 
-| Family | Font | Fallbacks |
-|--------|------|-----------|
-| `sans` | Inter | ui-sans-serif, system-ui, -apple-system |
-| `display` | Space Grotesk | ui-sans-serif, system-ui |
+| Role | Font | Weight |
+|------|------|--------|
+| Body (`sans`) | **Inter** | 400 · 500 · 600 |
+| Display (`display`) | **Space Grotesk** | 600 · 700 |
 
 ---
 
-## Database Schema (Supabase)
+## 🔌 API Reference
 
-```sql
--- Users: Supabase Auth (auth.users)
-
--- Consent tracking
-consent_records (user_id, consent_type, ip_address, user_agent, granted_at)
-
--- Garment catalog (13 seeded products from thedirtylaundry.pk)
-garments (id, slug, name, brand, category, color, price_pkr, image_url, ...)
-
--- Try-on pipeline jobs
-tryon_jobs (id, user_id, garment_id,
-            status [pending | processing | completed | failed],
-            result_photo_url, result_video_url, result_mesh_url,
-            model_used, processing_time_ms, ...)
-```
-
----
-
-## API Reference
+### Auth
 
 | Method | Endpoint | Auth | Description |
 |--------|----------|------|-------------|
 | `POST` | `/api/v1/auth/signup` | — | Create account |
 | `POST` | `/api/v1/auth/login` | — | Sign in |
-| `POST` | `/api/v1/auth/logout` | Bearer | Sign out |
-| `POST` | `/api/v1/auth/consent` | Bearer | Record GDPR consent (`consent_given` + `privacy_acknowledged`) |
-| `GET` | `/api/v1/garments` | — | List garments (filterable by `category`) |
-| `GET` | `/api/v1/garments/{id}` | — | Single garment details |
-| `POST` | `/api/v1/garments` | Bearer | Upload new garment (admin) |
-| `POST` | `/api/v1/tryon` | Bearer | Start VTO pipeline (multipart: `selfie` + `fullbody` files + `garment_id`) |
-| `GET` | `/api/v1/tryon/{job_id}` | Bearer | Poll job status |
-| `GET` | `/api/v1/tryon/history` | Bearer | User's try-on history (returns `looks` array) |
-| `DELETE` | `/api/v1/tryon/{job_id}` | Bearer | Delete a look |
-| `GET` | `/api/v1/health` | — | Service health + circuit breaker states |
-| `GET` | `/api/v1/metrics` | — | Prometheus-format metrics |
+| `POST` | `/api/v1/auth/logout` | 🔒 | Sign out |
+| `POST` | `/api/v1/auth/consent` | 🔒 | GDPR consent (`consent_given` + `privacy_acknowledged`) |
+
+### Garments
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| `GET` | `/api/v1/garments` | — | List garments (filter by `category`) |
+| `GET` | `/api/v1/garments/{id}` | — | Single garment |
+| `POST` | `/api/v1/garments` | 🔒 | Upload new garment (admin) |
+
+### Try-On
+
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| `POST` | `/api/v1/tryon` | 🔒 | Start pipeline (multipart: `selfie` + `fullbody` + `garment_id`) |
+| `GET` | `/api/v1/tryon/{job_id}` | 🔒 | Poll job status |
+| `GET` | `/api/v1/tryon/history` | 🔒 | User's looks (returns `looks[]`) |
+| `DELETE` | `/api/v1/tryon/{job_id}` | 🔒 | Delete a look |
+
+### System
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/v1/health` | Service health + circuit breaker states |
+| `GET` | `/api/v1/metrics` | Prometheus-format metrics |
 
 ---
 
-## Docker Compose Services
+## 🗄️ Database Schema
 
-| Service | Image / Build | Port | Purpose |
-|---------|---------------|------|---------|
-| **redis** | `redis:7-alpine` | 6379 | Job queue + cache (256MB LRU, AOF persistence) |
-| **backend** | `./backend/Dockerfile` | 8000 | FastAPI REST API |
-| **worker** | `./backend/Dockerfile` | — | ARQ async pipeline worker |
-| **frontend** | `./frontend/Dockerfile` | 80 | Nginx + static SPA bundle |
+```sql
+-- Auth: Supabase Auth (auth.users)
 
-### Nginx Configuration
+-- Privacy consent
+consent_records (user_id, consent_type, ip_address, user_agent, granted_at)
 
-- **Gzip:** text, JS, JSON, WASM, glTF, SVG (min 1024 bytes)
-- **Static caching:** `/assets/` → 1 year immutable; `.glb/.gltf/.hdr` → 7 days
-- **API proxy:** `/api/` → `backend:8000` (120s read timeout, 15MB upload limit)
-- **SPA fallback:** `try_files $uri $uri/ /index.html`
-- **Security headers:** X-Frame-Options, X-Content-Type-Options, Referrer-Policy, X-XSS-Protection
+-- Garment catalog
+garments (id, slug, name, brand, category, color, price, image_url, ...)
 
----
-
-## Environment Variables
-
-Copy `.env.example` to `.env` and fill in values:
-
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `ENVIRONMENT` | — | `development` | `development` / `staging` / `production` |
-| `USE_STUBS` | — | `true` | Mock all external APIs |
-| `LOG_LEVEL` | — | `INFO` | Python log level |
-| `CORS_ORIGINS` | — | `localhost:5173,3000` | Comma-separated origins |
-| `SUPABASE_URL` | ✅ | — | Supabase project URL |
-| `SUPABASE_ANON_KEY` | ✅ | — | Supabase anon key |
-| `SUPABASE_SERVICE_ROLE_KEY` | ✅ | — | Supabase service role key |
-| `FASHN_API_KEY` | ✅ | — | Fashn.ai API key (primary VTO) |
-| `FASHN_BASE_URL` | — | `https://api.fashn.ai` | Fashn API base URL |
-| `FASHN_TRYON_MODEL` | — | `tryon-v1.6` | Fashn try-on model |
-| `FASHN_VIDEO_MODEL` | — | `image-to-video` | Fashn video model |
-| `REPLICATE_API_TOKEN` | — | — | Replicate token (fallback) |
-| `REDIS_URL` | — | `redis://localhost:6379/0` | Redis connection URL |
+-- Try-on jobs
+tryon_jobs (
+  id, user_id, garment_id,
+  status  [pending | processing | completed | failed],
+  result_photo_url, result_video_url, result_mesh_url,
+  model_used, processing_time_ms, ...
+)
+```
 
 ---
 
-## Project Structure
+## 🐳 Docker
+
+4 services orchestrated with Docker Compose:
+
+| Service | Port | Stack |
+|---------|------|-------|
+| **redis** | 6379 | Redis 7 Alpine · 256MB LRU · AOF persistence |
+| **backend** | 8000 | FastAPI · Uvicorn |
+| **worker** | — | ARQ async pipeline worker |
+| **frontend** | 80 | Nginx · Gzip · Static caching |
+
+### Nginx Highlights
+
+- **Gzip** — JS, JSON, WASM, glTF, SVG (min 1KB)
+- **Caching** — `/assets/` 1yr immutable · `.glb/.gltf/.hdr` 7 days
+- **Proxy** — `/api/` → backend:8000 (120s timeout, 15MB uploads)
+- **SPA** — `try_files $uri $uri/ /index.html`
+- **Security** — X-Frame-Options, X-Content-Type-Options, Referrer-Policy
+
+---
+
+## ⚙️ Environment Variables
+
+Copy `.env.example` → `.env`:
+
+| Variable | Required | Description |
+|----------|:--------:|-------------|
+| `SUPABASE_URL` | ✅ | Supabase project URL |
+| `SUPABASE_ANON_KEY` | ✅ | Supabase anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | ✅ | Supabase service role key |
+| `FASHN_API_KEY` | ✅ | Fashn.ai API key |
+| `REPLICATE_API_TOKEN` | — | Replicate token (fallback providers) |
+| `REDIS_URL` | — | Default: `redis://localhost:6379/0` |
+| `ENVIRONMENT` | — | `development` / `staging` / `production` |
+| `USE_STUBS` | — | `true` = mock all AI APIs |
+| `LOG_LEVEL` | — | `DEBUG` / `INFO` / `WARNING` |
+| `CORS_ORIGINS` | — | Comma-separated allowed origins |
+
+---
+
+## 📁 Project Structure
 
 ```
 ├── backend/
 │   ├── app/
-│   │   ├── config.py                 # Pydantic settings (Supabase, Fashn, Replicate, Redis)
+│   │   ├── config.py                 # Pydantic settings
 │   │   ├── main.py                   # FastAPI app factory + lifespan
 │   │   ├── middleware/
-│   │   │   ├── auth_middleware.py     # Bearer token → Supabase user
+│   │   │   ├── auth_middleware.py     # Bearer token → user
 │   │   │   ├── logging_middleware.py  # Structured request logging
-│   │   │   └── rate_limit.py         # Token bucket rate limiter
-│   │   ├── models/
-│   │   │   ├── garment.py            # Garment Pydantic schemas
-│   │   │   ├── health.py             # Health/circuit breaker models
-│   │   │   ├── tryon.py              # TryOn job schemas
-│   │   │   └── user.py               # User/consent schemas
-│   │   ├── routers/
-│   │   │   ├── auth.py               # /auth/* endpoints
-│   │   │   ├── garments.py           # /garments/* endpoints
-│   │   │   ├── health.py             # /health + /metrics
-│   │   │   └── tryon.py              # /tryon/* endpoints
+│   │   │   └── rate_limit.py         # Token bucket limiter
+│   │   ├── models/                   # Pydantic schemas
+│   │   ├── routers/                  # /auth /garments /tryon /health
 │   │   ├── services/
-│   │   │   ├── auth_service.py       # Supabase Auth wrapper
-│   │   │   ├── body_estimation_service.py  # HMR 2.0 body estimation
 │   │   │   ├── fashn_service.py      # Fashn.ai VTO + video (PRIMARY)
-│   │   │   ├── storage_service.py    # Supabase Storage wrapper
-│   │   │   ├── synthesis_service.py  # 3-provider VTO chain
-│   │   │   └── video_service.py      # 360° video + 3D mesh
-│   │   ├── utils/
-│   │   │   ├── circuit_breaker.py    # pybreaker wrapper
-│   │   │   └── monitoring.py         # Prometheus metrics
-│   │   └── workers/
-│   │       ├── tryon_worker.py       # ARQ job handler
-│   │       └── worker_config.py      # Worker startup/shutdown
+│   │   │   ├── synthesis_service.py  # 3-provider failover chain
+│   │   │   ├── video_service.py      # 360° video + 3D mesh
+│   │   │   ├── body_estimation_service.py
+│   │   │   ├── auth_service.py
+│   │   │   └── storage_service.py
+│   │   ├── utils/                    # Circuit breakers + Prometheus
+│   │   └── workers/                  # ARQ job handler + config
 │   ├── Dockerfile
 │   ├── requirements.txt
 │   └── supabase_schema.sql
+│
 ├── frontend/
 │   ├── src/
-│   │   ├── App.tsx                   # Auth-aware routing + loading state
-│   │   ├── main.tsx                  # React DOM entry
-│   │   ├── index.css                 # Tailwind + custom tokens + glass effects
 │   │   ├── components/
-│   │   │   ├── ui/
-│   │   │   │   ├── AuthModal.tsx     # Sign-in/sign-up modal
-│   │   │   │   ├── ConsentModal.tsx  # GDPR consent flow
-│   │   │   │   ├── FallbackState.tsx # Error/empty state card
-│   │   │   │   ├── GarmentCatalog.tsx# Garment grid with filters
-│   │   │   │   ├── Header.tsx        # Sticky nav + auth menu
-│   │   │   │   ├── HeroLanding.tsx   # Guest landing page
-│   │   │   │   ├── MyLooks.tsx       # Try-on history grid
-│   │   │   │   ├── ProgressTracker.tsx# Pipeline step tracker
-│   │   │   │   ├── TryOnFlow.tsx     # 4-step try-on wizard
-│   │   │   │   └── ViewModeSwitcher.tsx# Photo/3D/Video toggle
-│   │   │   └── viewer/
-│   │   │       ├── PhotoView.tsx     # Zoomable photo viewer
-│   │   │       ├── Scene.tsx         # R3F canvas + controls + post-processing
-│   │   │       ├── TryOnModel.tsx    # GLB mesh loader + PBR upgrade
-│   │   │       └── VideoPlayer.tsx   # Looping MP4 360° player
-│   │   ├── hooks/
-│   │   │   ├── useConsent.ts         # Consent status hook
-│   │   │   ├── useGarments.ts        # Garment fetch/filter hook
-│   │   │   └── useTryOnRealtime.ts   # Supabase Realtime subscription
-│   │   ├── lib/
-│   │   │   ├── api.ts               # Axios API client
-│   │   │   └── supabase.ts          # Supabase client init
-│   │   ├── stores/
-│   │   │   ├── useAuthStore.ts      # Auth state (Zustand)
-│   │   │   ├── useTryOnStore.ts     # Try-on pipeline state
-│   │   │   └── useViewerStore.ts    # 3D viewer state (camera, quality, grid)
-│   │   └── types/
-│   │       └── index.ts             # Shared TypeScript interfaces
-│   ├── Dockerfile
-│   ├── nginx.conf
-│   ├── vite.config.ts
+│   │   │   ├── ui/                   # 10 UI components (Hero, Catalog, Flow, etc.)
+│   │   │   └── viewer/               # 4 viewer components (Scene, Model, Photo, Video)
+│   │   ├── hooks/                    # useGarments · useConsent · useTryOnRealtime
+│   │   ├── stores/                   # Zustand: auth · tryon · viewer
+│   │   ├── lib/                      # API client · Supabase init
+│   │   ├── types/                    # Shared TypeScript interfaces
+│   │   └── index.css                 # Tailwind + glass effects + custom tokens
 │   ├── tailwind.config.js
-│   └── package.json
+│   ├── vite.config.ts
+│   ├── nginx.conf
+│   └── Dockerfile
+│
 ├── docker-compose.yml
 ├── .env.example
 └── README.md
@@ -446,90 +443,58 @@ Copy `.env.example` to `.env` and fill in values:
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
-- **Node.js 20+** and **npm**
-- **Python 3.12+** and **pip**
-- **Docker & Docker Compose** (optional, for containerised run)
-- **Redis** (or Docker will provide it)
 
-### Development (Local)
+- **Node.js 20+** · **Python 3.12+** · **Redis** (or use Docker)
+
+### Local Development
 
 ```bash
-# 1. Clone & configure
+# Clone & configure
 cp .env.example .env
-# Fill in SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
-# Fill in FASHN_API_KEY (get from app.fashn.ai)
-# Set USE_STUBS=false for real inference
+# Fill in SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, FASHN_API_KEY
 
-# 2. Backend
+# Backend
 cd backend
 pip install -r requirements.txt
 uvicorn app.main:app --reload --port 8000
 
-# 3. Worker (separate terminal)
+# Worker (new terminal)
 cd backend
 arq app.workers.worker_config.WorkerSettings
 
-# 4. Frontend
+# Frontend (new terminal)
 cd frontend
 npm install
 npm run dev
 ```
 
-### Docker Compose
+### Docker
 
 ```bash
 docker compose up --build
-# Backend:  http://localhost:8000
-# Frontend: http://localhost:80
-# API Docs: http://localhost:8000/api/docs
+# Frontend → http://localhost
+# Backend  → http://localhost:8000
+# API Docs → http://localhost:8000/api/docs
 ```
 
 ---
 
-## Seeded Products
+## 🧠 Design Decisions
 
-13 real products from [thedirtylaundry.pk](https://thedirtylaundry.pk):
-
-| SKU | Name | Category | Price (PKR) |
-|-----|------|----------|-------------|
-| tdl-001 | Brooklyn Trousers – Grey | lower_body | 5,490 |
-| tdl-002 | Brooklyn Trousers – Black | lower_body | 5,490 |
-| tdl-003 | Core Quarter Zipper – Teal Green | upper_body | 5,990 |
-| tdl-004 | Core Quarter Zipper – Grey | upper_body | 5,990 |
-| tdl-005 | Essential Tracksuit – Mocha Brown | upper_body | 12,490 |
-| tdl-006 | Kyoto Summer Hoodie – Beige | upper_body | 6,490 |
-| tdl-007 | Oslo Embroidered Hoodie – Black | upper_body | 6,990 |
-| tdl-008 | Oslo Embroidered Hoodie – Navy | upper_body | 6,990 |
-| tdl-009 | Oslo Embroidered Hoodie – Olive Green | upper_body | 6,990 |
-| tdl-010 | Vancouver Quarter Zipper – Black | upper_body | 6,490 |
-| tdl-011 | Vancouver Quarter Zipper – Charcoal | upper_body | 6,490 |
-| tdl-012 | Vancouver Quarter Zipper – Navy Blue | upper_body | 6,490 |
-| tdl-013 | Vancouver Quarter Zipper – Olive Green | upper_body | 6,490 |
+| Decision | Why |
+|----------|-----|
+| **Snapshot-first storage** | All AI outputs are immediately persisted to Supabase Storage with signed URLs — no ephemeral external links |
+| **Zero-polling realtime** | Job updates via Supabase Realtime (Postgres → WebSocket). Polling is only a fallback |
+| **Graceful degradation** | Each pipeline layer fails independently. No video? Photo still works. No mesh? Photo view available |
+| **Circuit breakers** | 7 independent pybreaker circuits. Failures trip fast, auto-recover after 60–120s |
+| **PBR material upgrade** | Raw `.glb` meshes auto-upgrade from `MeshStandard` → `MeshPhysical` with clearcoat + env mapping |
+| **Adaptive quality** | SMAA post-processing disabled on low-quality, DPR scales `[1, 2]` based on device |
 
 ---
 
-## Key Design Decisions
+## 📄 License
 
-### Snapshot-First Storage
-Every external API result (images, meshes, videos) is immediately downloaded and re-uploaded to Supabase Storage with signed URLs. The frontend never receives ephemeral external URLs.
-
-### Zero-Polling Realtime
-Job status updates flow through Supabase Realtime (Postgres → WebSocket). Polling is only a fallback if Realtime is unavailable.
-
-### Graceful Degradation
-Each pipeline layer can fail independently. If 360° video fails, the 2D photo still works. If 3D mesh fails, the photo view is available. The UI adapts the ViewModeSwitcher to only show available result types.
-
-### Circuit Breakers
-Each external API has its own circuit breaker (pybreaker). When a service is down, requests fail fast instead of queuing up. After the reset timeout, the circuit half-opens to test recovery.
-
-### PBR Material Upgrade
-Raw `.glb` meshes from TRELLIS use basic `MeshStandardMaterial`. The viewer automatically upgrades every mesh to `MeshPhysicalMaterial` with clearcoat, environment mapping, and double-sided rendering for realistic fabric appearance.
-
----
-
-## License
-
-Private — The Dirty Laundry. All rights reserved.
+MIT — Use it for any brand, any store, any project.
