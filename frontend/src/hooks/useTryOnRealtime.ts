@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useTryOnStore } from '@/stores/useTryOnStore';
-import type { JobStatus, RealtimeJobUpdate } from '@/types';
+import type { JobStatus } from '@/types';
 
 /**
  * Subscribes to Supabase Realtime for a specific tryon job.
@@ -51,24 +51,21 @@ export function useTryOnRealtime(jobId: string | null) {
           realtimeWorking = true;
           const row = payload.new as Record<string, unknown>;
 
-          const update: Partial<RealtimeJobUpdate> = {
-            status: row.status as JobStatus,
-            progress: (row.progress as number) ?? 0,
-            current_step: row.current_step as string | undefined,
-            hero_image_url: row.hero_image_url as string | undefined,
-            mesh_url: row.mesh_url as string | undefined,
-            video_url: row.video_url as string | undefined,
-            error: row.error as string | undefined,
-          };
+          // DB columns: result_photo_url, result_video_url, result_mesh_url
+          const hasResult = !!row.result_photo_url;
 
           updateJobFromRealtime({
-            status: update.status,
-            progress: update.progress,
-            currentStep: update.current_step,
-            heroImageUrl: update.hero_image_url,
-            meshUrl: update.mesh_url,
-            videoUrl: update.video_url,
-            error: update.error,
+            status: row.status as JobStatus,
+            progress: (row.progress as number) ?? 0,
+            currentStep: row.current_step as string | undefined,
+            result: hasResult
+              ? {
+                  photo_url: row.result_photo_url as string | undefined,
+                  video_url: row.result_video_url as string | undefined,
+                  mesh_url: row.result_mesh_url as string | undefined,
+                }
+              : undefined,
+            error: row.error as string | undefined,
           });
 
           // Stop polling if realtime is working
@@ -78,7 +75,8 @@ export function useTryOnRealtime(jobId: string | null) {
           }
 
           // Unsubscribe if terminal state
-          if (update.status === 'completed' || update.status === 'failed') {
+          const status = row.status as string;
+          if (status === 'completed' || status === 'failed') {
             setTimeout(cleanup, 500);
           }
         },

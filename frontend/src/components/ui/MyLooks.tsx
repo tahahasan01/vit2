@@ -81,7 +81,7 @@ export default function MyLooks() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {history.map((item, idx) => (
           <motion.div
-            key={item.id}
+            key={item.job_id}
             className="glass-card overflow-hidden group relative"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -89,10 +89,10 @@ export default function MyLooks() {
           >
             {/* Thumbnail */}
             <div className="aspect-[3/4] relative overflow-hidden">
-              {item.hero_image_url ? (
+              {item.result?.photo_url ? (
                 <img
-                  src={item.hero_image_url}
-                  alt={item.garment.name}
+                  src={item.result.photo_url}
+                  alt={item.garment_name}
                   className="w-full h-full object-cover"
                   loading="lazy"
                 />
@@ -104,7 +104,7 @@ export default function MyLooks() {
 
               {/* Hover overlay */}
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
-                {item.mesh_url && (
+                {item.result?.mesh_url && (
                   <button
                     className="px-3 py-2 rounded-lg bg-white/10 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/20 transition-colors"
                     title="View in 3D"
@@ -112,7 +112,7 @@ export default function MyLooks() {
                     3D View
                   </button>
                 )}
-                {item.video_url && (
+                {item.result?.video_url && (
                   <button
                     className="px-3 py-2 rounded-lg bg-white/10 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/20 transition-colors"
                     title="Play 360° video"
@@ -121,13 +121,6 @@ export default function MyLooks() {
                   </button>
                 )}
               </div>
-
-              {/* Status badge */}
-              {item.status === 'failed' && (
-                <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-red-500/80 text-xs text-white font-medium">
-                  Failed
-                </div>
-              )}
             </div>
 
             {/* Info */}
@@ -135,12 +128,12 @@ export default function MyLooks() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-semibold text-white truncate">
-                    {item.garment.name}
+                    {item.garment_name}
                   </p>
-                  <p className="text-xs text-white/40">{item.garment.brand}</p>
+                  <p className="text-xs text-white/40">{item.category}</p>
                 </div>
                 <button
-                  onClick={() => deleteLook(item.id)}
+                  onClick={() => deleteLook(item.job_id)}
                   className="p-2 rounded-lg text-white/20 hover:text-red-400 hover:bg-red-500/10 transition-colors"
                   title="Delete look"
                 >

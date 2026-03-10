@@ -9,18 +9,16 @@ interface ConsentModalProps {
 
 export default function ConsentModal({ onComplete, onClose }: ConsentModalProps) {
   const { giveConsent, loading, error } = useConsent();
-  const [dataProcessing, setDataProcessing] = useState(false);
-  const [imageStorage, setImageStorage] = useState(false);
-  const [marketing, setMarketing] = useState(false);
+  const [consentGiven, setConsentGiven] = useState(false);
+  const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
 
-  const canSubmit = dataProcessing && imageStorage;
+  const canSubmit = consentGiven && privacyAcknowledged;
 
   const handleSubmit = async () => {
     try {
       await giveConsent({
-        data_processing: dataProcessing,
-        image_storage: imageStorage,
-        marketing,
+        consent_given: consentGiven,
+        privacy_acknowledged: privacyAcknowledged,
       });
       onComplete();
     } catch {
@@ -53,12 +51,12 @@ export default function ConsentModal({ onComplete, onClose }: ConsentModalProps)
         </div>
 
         <div className="space-y-4">
-          {/* Data Processing — required */}
+          {/* AI Processing Consent — required */}
           <label className="flex items-start gap-3 cursor-pointer group">
             <input
               type="checkbox"
-              checked={dataProcessing}
-              onChange={(e) => setDataProcessing(e.target.checked)}
+              checked={consentGiven}
+              onChange={(e) => setConsentGiven(e.target.checked)}
               className="mt-1 w-4 h-4 rounded border-white/20 bg-surface-800 text-brand-500 focus:ring-brand-500/50"
             />
             <div>
@@ -72,39 +70,21 @@ export default function ConsentModal({ onComplete, onClose }: ConsentModalProps)
             </div>
           </label>
 
-          {/* Image Storage — required */}
+          {/* Privacy Acknowledgement — required */}
           <label className="flex items-start gap-3 cursor-pointer group">
             <input
               type="checkbox"
-              checked={imageStorage}
-              onChange={(e) => setImageStorage(e.target.checked)}
+              checked={privacyAcknowledged}
+              onChange={(e) => setPrivacyAcknowledged(e.target.checked)}
               className="mt-1 w-4 h-4 rounded border-white/20 bg-surface-800 text-brand-500 focus:ring-brand-500/50"
             />
             <div>
               <p className="text-sm font-medium text-white group-hover:text-brand-400 transition-colors">
-                Image Storage
+                Privacy Policy
                 <span className="text-red-400 ml-1">*</span>
               </p>
               <p className="text-xs text-white/40">
-                I consent to my uploaded photo and generated results being stored securely for up to 30 days so I can view them later.
-              </p>
-            </div>
-          </label>
-
-          {/* Marketing — optional */}
-          <label className="flex items-start gap-3 cursor-pointer group">
-            <input
-              type="checkbox"
-              checked={marketing}
-              onChange={(e) => setMarketing(e.target.checked)}
-              className="mt-1 w-4 h-4 rounded border-white/20 bg-surface-800 text-brand-500 focus:ring-brand-500/50"
-            />
-            <div>
-              <p className="text-sm font-medium text-white group-hover:text-brand-400 transition-colors">
-                Marketing Communications
-              </p>
-              <p className="text-xs text-white/40">
-                I'd like to receive updates about new styles and features.
+                I have read and acknowledge the privacy policy regarding how my data is stored and processed.
               </p>
             </div>
           </label>

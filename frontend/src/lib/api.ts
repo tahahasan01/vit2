@@ -87,26 +87,27 @@ export class ApiError extends Error {
 /* ─── Typed API methods ─── */
 
 import type {
-  TryOnJobResponse,
-  TryOnResult,
-  TryOnHistoryItem,
+  TryOnJobCreated,
+  TryOnJobStatus,
+  TryOnHistory,
   GarmentCatalogResponse,
   Garment,
   HealthResponse,
   ConsentPayload,
-  User,
+  UserProfile,
+  AuthResponse,
 } from '@/types';
 
 export const api = {
   /* ── Auth ── */
-  signUp: (email: string, password: string, displayName?: string) =>
-    request<{ user: User; token: string }>('/auth/signup', {
+  signUp: (email: string, password: string) =>
+    request<AuthResponse>('/auth/signup', {
       method: 'POST',
-      body: JSON.stringify({ email, password, display_name: displayName }),
+      body: JSON.stringify({ email, password }),
     }),
 
   signIn: (email: string, password: string) =>
-    request<{ user: User; token: string }>('/auth/login', {
+    request<AuthResponse>('/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     }),
@@ -114,19 +115,19 @@ export const api = {
   signOut: () =>
     request<void>('/auth/logout', { method: 'POST' }),
 
-  getMe: () => request<User>('/auth/me'),
+  getMe: () => request<UserProfile>('/auth/me'),
 
   recordConsent: (consent: ConsentPayload) =>
-    request<{ ok: boolean }>('/auth/consent', {
+    request<UserProfile>('/auth/consent', {
       method: 'POST',
       body: JSON.stringify(consent),
     }),
 
   /* ── Garments ── */
-  getGarments: (page = 1, perPage = 20, category?: string) => {
+  getGarments: (limit = 50, offset = 0, category?: string) => {
     const params = new URLSearchParams({
-      page: String(page),
-      per_page: String(perPage),
+      limit: String(limit),
+      offset: String(offset),
     });
     if (category) params.set('category', category);
     return request<GarmentCatalogResponse>(`/garments?${params}`);
@@ -139,25 +140,26 @@ export const api = {
     upload<Garment>('/garments', formData),
 
   /* ── Try-On ── */
-  startTryOn: (garmentId: string, userPhotoFile?: File) => {
+  startTryOn: (garmentId: string, userPhotoFile: File, category = 'upper_body', garmentDescription = '') => {
     const formData = new FormData();
     formData.append('garment_id', garmentId);
-    if (userPhotoFile) {
-      formData.append('user_photo', userPhotoFile);
-    }
-    return upload<TryOnJobResponse>('/tryon', formData);
+    formData.append('category', category);
+    formData.append('garment_description', garmentDescription);
+    // Backend expects two files: selfie + fullbody.
+    // Single-photo UX: send the same photo for both fields.
+    formData.append('selfie', userPhotoFile);
+    formData.append('fullbody', userPhotoFile);
+    return upload<TryOnJobCreated>('/tryon', formData);
   },
 
   getTryOnStatus: (jobId: string) =>
-    request<TryOnResult>(`/tryon/${jobId}`),
+    request<TryOnJobStatus>(`/tryon/${jobId}`),
 
-  getTryOnHistory: (page = 1, perPage = 20) =>
-    request<{ items: TryOnHistoryItem[]; total: number }>(
-      `/tryon/history?page=${page}&per_page=${perPage}`,
-    ),
+  getTryOnHistory: (limit = 50) =>
+    request<TryOnHistory>(`/tryon/history?limit=${limit}`),
 
-  deleteTryOn: (id: string) =>
-    request<void>(`/tryon/${id}`, { method: 'DELETE' }),
+  deleteTryOn: (jobId: string) =>
+    request<void>(`/tryon/${jobId}`, { method: 'DELETE' }),
 
   /* ── Health ── */
   getHealth: () => request<HealthResponse>('/health'),

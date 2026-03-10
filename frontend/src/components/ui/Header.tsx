@@ -65,10 +65,10 @@ export default function Header() {
                   className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors"
                 >
                   <div className="w-7 h-7 rounded-full bg-brand-500/20 border border-brand-500/40 flex items-center justify-center text-xs font-semibold text-brand-400">
-                    {(user.display_name ?? user.email ?? 'U')[0]!.toUpperCase()}
+                    {(user.email ?? 'U')[0]!.toUpperCase()}
                   </div>
                   <span className="text-sm text-white/70 hidden sm:block">
-                    {user.display_name || user.email?.split('@')[0] || 'User'}
+                    {user.email?.split('@')[0] || 'User'}
                   </span>
                 </button>
 

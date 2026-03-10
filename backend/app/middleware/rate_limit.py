@@ -47,7 +47,8 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                 max_requests, window = limit, win
                 break
 
-        key = f"{client_ip}:{path.split('/')[3] if '/' in path else path}"
+        parts = path.split('/')
+        key = f"{client_ip}:{parts[3] if len(parts) > 3 else path}"
         now = time.monotonic()
 
         # Clean old entries

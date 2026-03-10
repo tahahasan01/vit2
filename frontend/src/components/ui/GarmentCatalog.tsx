@@ -5,10 +5,9 @@ import { GarmentCategory } from '@/types';
 
 const CATEGORIES = [
   { key: null, label: 'All' },
-  { key: GarmentCategory.TopWear, label: 'Tops' },
-  { key: GarmentCategory.BottomWear, label: 'Bottoms' },
-  { key: GarmentCategory.FullBody, label: 'Full Body' },
-  { key: GarmentCategory.Outerwear, label: 'Outerwear' },
+  { key: GarmentCategory.UpperBody, label: 'Tops' },
+  { key: GarmentCategory.LowerBody, label: 'Bottoms' },
+  { key: GarmentCategory.Dresses, label: 'Dresses' },
 ];
 
 export default function GarmentCatalog() {
@@ -109,11 +108,6 @@ export default function GarmentCatalog() {
                     {garment.name}
                   </p>
                   <p className="text-xs text-white/60">{garment.brand}</p>
-                  {garment.price && (
-                    <p className="text-xs text-brand-400 mt-1">
-                      {garment.currency ?? '$'}{garment.price}
-                    </p>
-                  )}
                 </div>
 
                 {/* Selected badge */}

@@ -130,6 +130,65 @@ async def submit_tryon(
     )
 
 
+# ── My Looks (History) ──────────────────────────────────────────────
+# NOTE: /history MUST be registered BEFORE /{job_id} so FastAPI doesn't
+# match "history" as a job_id path parameter.
+@router.get("/history", response_model=TryOnHistory)
+async def get_history(
+    request: Request,
+    user: UserProfile = Depends(get_current_user),
+    limit: int = 50,
+):
+    """
+    User's 'My Looks' gallery — completed try-on results.
+    """
+    settings = request.app.state.settings
+
+    if settings.use_stubs:
+        return TryOnHistory(looks=[], total=0)
+
+    http: httpx.AsyncClient = request.app.state.http_client
+    resp = await http.get(
+        (
+            f"{settings.supabase.url}/rest/v1/tryon_jobs"
+            f"?user_id=eq.{user.id}"
+            f"&status=eq.completed"
+            f"&select=*"
+            f"&order=created_at.desc"
+            f"&limit={limit}"
+        ),
+        headers={
+            "apikey": settings.supabase.service_role_key,
+            "Authorization": f"Bearer {settings.supabase.service_role_key}",
+        },
+        timeout=10.0,
+    )
+
+    if resp.status_code != 200:
+        return TryOnHistory(looks=[], total=0)
+
+    rows = resp.json()
+    looks = []
+    for row in rows:
+        looks.append(
+            TryOnHistoryItem(
+                job_id=row["id"],
+                garment_id=row.get("garment_id", ""),
+                garment_name=row.get("garment_name", "Unknown"),
+                garment_thumbnail=row.get("garment_thumbnail", ""),
+                category=GarmentCategory(row.get("category", "upper_body")),
+                result=TryOnResult(
+                    photo_url=row.get("result_photo_url"),
+                    video_url=row.get("result_video_url"),
+                    mesh_url=row.get("result_mesh_url"),
+                ),
+                created_at=row.get("created_at"),
+            )
+        )
+
+    return TryOnHistory(looks=looks, total=len(looks))
+
+
 # ── Poll Job Status ─────────────────────────────────────────────────
 @router.get("/{job_id}", response_model=TryOnJobStatus)
 async def get_job_status(
@@ -197,63 +256,6 @@ async def get_job_status(
         created_at=row.get("created_at", now),
         updated_at=row.get("updated_at", now),
     )
-
-
-# ── My Looks (History) ──────────────────────────────────────────────
-@router.get("/history", response_model=TryOnHistory)
-async def get_history(
-    request: Request,
-    user: UserProfile = Depends(get_current_user),
-    limit: int = 50,
-):
-    """
-    User's 'My Looks' gallery — completed try-on results.
-    """
-    settings = request.app.state.settings
-
-    if settings.use_stubs:
-        return TryOnHistory(looks=[], total=0)
-
-    http: httpx.AsyncClient = request.app.state.http_client
-    resp = await http.get(
-        (
-            f"{settings.supabase.url}/rest/v1/tryon_jobs"
-            f"?user_id=eq.{user.id}"
-            f"&status=eq.completed"
-            f"&select=*"
-            f"&order=created_at.desc"
-            f"&limit={limit}"
-        ),
-        headers={
-            "apikey": settings.supabase.service_role_key,
-            "Authorization": f"Bearer {settings.supabase.service_role_key}",
-        },
-        timeout=10.0,
-    )
-
-    if resp.status_code != 200:
-        return TryOnHistory(looks=[], total=0)
-
-    rows = resp.json()
-    looks = []
-    for row in rows:
-        looks.append(
-            TryOnHistoryItem(
-                job_id=row["id"],
-                garment_id=row.get("garment_id", ""),
-                garment_name=row.get("garment_name", "Unknown"),
-                garment_thumbnail=row.get("garment_thumbnail", ""),
-                category=GarmentCategory(row.get("category", "upper_body")),
-                result=TryOnResult(
-                    photo_url=row.get("result_photo_url"),
-                    video_url=row.get("result_video_url"),
-                    mesh_url=row.get("result_mesh_url"),
-                ),
-                created_at=row.get("created_at"),
-            )
-        )
-
-    return TryOnHistory(looks=looks, total=len(looks))
 
 
 # ── Delete Look ──────────────────────────────────────────────────────

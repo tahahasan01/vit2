@@ -2,8 +2,9 @@ import { create } from 'zustand';
 import { api } from '@/lib/api';
 import type {
   JobStatus,
-  TryOnResult,
+  TryOnJobStatus,
   TryOnHistoryItem,
+  TryOnResult,
   ViewMode,
 } from '@/types';
 
@@ -15,9 +16,7 @@ interface ActiveJob {
   status: JobStatus;
   progress: number;
   currentStep?: string;
-  heroImageUrl?: string;
-  meshUrl?: string;
-  videoUrl?: string;
+  result?: TryOnResult;
   error?: string;
 }
 
@@ -46,8 +45,8 @@ interface TryOnStore {
   updateJobFromRealtime: (update: Partial<ActiveJob>) => void;
   clearActiveJob: () => void;
 
-  fetchHistory: (page?: number) => Promise<void>;
-  deleteLook: (id: string) => Promise<void>;
+  fetchHistory: () => Promise<void>;
+  deleteLook: (jobId: string) => Promise<void>;
 
   /* Convenience */
   reset: () => void;
@@ -75,8 +74,9 @@ export const useTryOnStore = create<TryOnStore>()((set, get) => ({
   startTryOn: async () => {
     const { selectedGarmentId, userPhotoFile } = get();
     if (!selectedGarmentId) throw new Error('No garment selected');
+    if (!userPhotoFile) throw new Error('No photo uploaded');
 
-    const res = await api.startTryOn(selectedGarmentId, userPhotoFile ?? undefined);
+    const res = await api.startTryOn(selectedGarmentId, userPhotoFile);
 
     set({
       activeJob: {
@@ -93,7 +93,7 @@ export const useTryOnStore = create<TryOnStore>()((set, get) => ({
 
   /** Fallback polling — only used if Supabase Realtime is unavailable */
   pollJobStatus: async (jobId) => {
-    const res: TryOnResult = await api.getTryOnStatus(jobId);
+    const res: TryOnJobStatus = await api.getTryOnStatus(jobId);
 
     set({
       activeJob: {
@@ -102,15 +102,13 @@ export const useTryOnStore = create<TryOnStore>()((set, get) => ({
         status: res.status,
         progress: res.progress,
         currentStep: res.current_step,
-        heroImageUrl: res.hero_image_url,
-        meshUrl: res.mesh_url,
-        videoUrl: res.video_url,
+        result: res.result,
         error: res.error,
       },
     });
 
-    // Auto-set view mode when results arrive
-    if (res.mesh_url && !get().activeJob?.meshUrl) {
+    // Auto-set view mode when 3D mesh arrives
+    if (res.result?.mesh_url && !get().activeJob?.result?.mesh_url) {
       set({ viewMode: '3d' });
     }
   },
@@ -123,7 +121,7 @@ export const useTryOnStore = create<TryOnStore>()((set, get) => ({
     set({ activeJob: merged });
 
     // Auto-switch to 3D view when mesh arrives
-    if (update.meshUrl && !current.meshUrl) {
+    if (update.result?.mesh_url && !current.result?.mesh_url) {
       set({ viewMode: '3d' });
     }
   },
@@ -132,20 +130,20 @@ export const useTryOnStore = create<TryOnStore>()((set, get) => ({
 
   /* ─── History ─── */
 
-  fetchHistory: async (page = 1) => {
+  fetchHistory: async () => {
     set({ historyLoading: true });
     try {
-      const res = await api.getTryOnHistory(page);
-      set({ history: res.items, historyLoading: false });
+      const res = await api.getTryOnHistory();
+      set({ history: res.looks, historyLoading: false });
     } catch {
       set({ historyLoading: false });
     }
   },
 
-  deleteLook: async (id) => {
-    await api.deleteTryOn(id);
+  deleteLook: async (jobId) => {
+    await api.deleteTryOn(jobId);
     set((state) => ({
-      history: state.history.filter((item) => item.id !== id),
+      history: state.history.filter((item) => item.job_id !== jobId),
     }));
   },
 

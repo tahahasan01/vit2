@@ -48,18 +48,14 @@ async def health_check(request: Request):
         state_str = breaker_states.get(breaker_name, "closed")
         circuit = _map_circuit_state(state_str)
 
-        metric_key = f"pipeline.{breaker_name}"
-        m = metrics_data.get(metric_key, {})
-
         services[display_name] = ExternalServiceStatus(
             status=(
                 ServiceHealth.UNHEALTHY if circuit == CircuitState.OPEN
                 else ServiceHealth.DEGRADED if circuit == CircuitState.HALF_OPEN
                 else ServiceHealth.HEALTHY
             ),
-            latency_ms=m.get("avg_ms"),
             circuit=circuit,
-            last_error=m.get("last_error") or None,
+            last_error=None,
         )
 
     # Supabase health (always healthy in stubs)

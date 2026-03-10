@@ -12,26 +12,34 @@ export enum JobStatus {
 }
 
 export enum GarmentCategory {
-  TopWear = 'top_wear',
-  BottomWear = 'bottom_wear',
-  FullBody = 'full_body',
-  Outerwear = 'outerwear',
+  UpperBody = 'upper_body',
+  LowerBody = 'lower_body',
+  Dresses = 'dresses',
 }
 
 export type ViewMode = '3d' | 'photo' | 'video';
 
 /* ─── Auth ─── */
 
-export interface User {
+export interface UserProfile {
   id: string;
   email: string;
-  display_name?: string;
-  avatar_url?: string;
+  consent_given: boolean;
+  consent_given_at?: string;
   created_at: string;
 }
 
+/** Kept for convenience in components that only need basic info */
+export type User = UserProfile;
+
+export interface AuthResponse {
+  access_token: string;
+  refresh_token: string;
+  user: UserProfile;
+}
+
 export interface AuthState {
-  user: User | null;
+  user: UserProfile | null;
   token: string | null;
   isAuthenticated: boolean;
   loading: boolean;
@@ -42,70 +50,70 @@ export interface AuthState {
 export interface Garment {
   id: string;
   name: string;
-  brand: string;
   category: GarmentCategory;
-  description?: string;
-  price?: number;
-  currency?: string;
+  brand: string;
+  description: string;
   image_url: string;
-  thumbnail_url?: string;
-  metadata?: Record<string, unknown>;
+  thumbnail_url: string;
   created_at: string;
 }
 
 export interface GarmentCatalogResponse {
   garments: Garment[];
   total: number;
-  page: number;
-  per_page: number;
+  categories: string[];
 }
 
 /* ─── Try-On ─── */
 
-export interface TryOnRequest {
-  garment_id: string;
-  user_photo_url?: string;
-}
-
-export interface TryOnJobResponse {
+export interface TryOnJobCreated {
   job_id: string;
   status: JobStatus;
+  estimated_seconds: number;
   created_at: string;
 }
 
 export interface TryOnResult {
+  photo_url?: string;
+  video_url?: string;
+  mesh_url?: string;
+}
+
+export interface TryOnJobStatus {
   job_id: string;
   status: JobStatus;
   progress: number;
   current_step?: string;
-  hero_image_url?: string;
-  mesh_url?: string;
-  video_url?: string;
+  result?: TryOnResult;
   error?: string;
   created_at: string;
-  completed_at?: string;
+  updated_at: string;
 }
 
 export interface TryOnHistoryItem {
-  id: string;
-  garment: Garment;
-  hero_image_url?: string;
-  mesh_url?: string;
-  video_url?: string;
-  status: JobStatus;
+  job_id: string;
+  garment_id: string;
+  garment_name: string;
+  garment_thumbnail: string;
+  category: GarmentCategory;
+  result: TryOnResult;
   created_at: string;
+}
+
+export interface TryOnHistory {
+  looks: TryOnHistoryItem[];
+  total: number;
 }
 
 /* ─── Realtime ─── */
 
 export interface RealtimeJobUpdate {
-  job_id: string;
   status: JobStatus;
   progress: number;
   current_step?: string;
-  hero_image_url?: string;
-  mesh_url?: string;
-  video_url?: string;
+  result_photo_url?: string;
+  result_video_url?: string;
+  result_mesh_url?: string;
   error?: string;
 }
 
@@ -144,9 +152,8 @@ export interface HealthResponse {
 /* ─── Consent ─── */
 
 export interface ConsentPayload {
-  data_processing: boolean;
-  image_storage: boolean;
-  marketing?: boolean;
+  consent_given: boolean;
+  privacy_acknowledged: boolean;
 }
 
 /* ─── API Error ─── */

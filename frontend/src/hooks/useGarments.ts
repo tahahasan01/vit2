@@ -15,7 +15,7 @@ interface UseGarmentsReturn {
   refresh: () => Promise<void>;
 }
 
-export function useGarments(perPage = 20): UseGarmentsReturn {
+export function useGarments(perPage = 50): UseGarmentsReturn {
   const [garments, setGarments] = useState<Garment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +29,8 @@ export function useGarments(perPage = 20): UseGarmentsReturn {
     setLoading(true);
     setError(null);
     try {
-      const res = await api.getGarments(page, perPage, category ?? undefined);
+      const offset = (page - 1) * perPage;
+      const res = await api.getGarments(perPage, offset, category ?? undefined);
       setGarments(res.garments);
       setTotal(res.total);
     } catch (err) {

@@ -27,7 +27,7 @@ export default function AuthModal({ onClose }: AuthModalProps) {
       if (tab === 'sign-in') {
         await signIn(email, password);
       } else {
-        await signUp(email, password, displayName || undefined);
+        await signUp(email, password);
       }
       onClose();
     } catch (err: any) {

@@ -164,8 +164,8 @@ async def process_tryon_job(
             JobStatus.GARMENT_SYNTHESIS, 20, PipelineStep.GARMENT_SYNTHESIS,
         )
 
-        # Use full-body photo URL for VTO (Supabase public URL)
-        human_photo_url = storage.get_public_url("user-uploads", fullbody_url)
+        # Use full-body photo URL for VTO (signed URL — bucket is private)
+        human_photo_url = await storage.get_signed_url("user-uploads", fullbody_url, expires_in=3600)
 
         async with metrics.track("pipeline.garment_synthesis"):
             synthesis_result = await synthesis.synthesize(

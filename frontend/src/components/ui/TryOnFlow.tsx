@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTryOnStore } from '@/stores/useTryOnStore';
@@ -42,9 +42,11 @@ export default function TryOnFlow() {
 
   // Auto-progress flow when job completes
   const jobStatus = activeJob?.status;
-  if (jobStatus === 'completed' && step === 'processing') {
-    setStep('result');
-  }
+  useEffect(() => {
+    if (jobStatus === 'completed' && step === 'processing') {
+      setStep('result');
+    }
+  }, [jobStatus, step]);
 
   /* ─── Photo upload dropzone ─── */
   const onDrop = useCallback(
@@ -88,9 +90,9 @@ export default function TryOnFlow() {
 
   /* ─── View mode disabled states ─── */
   const disabledModes: ViewMode[] = [];
-  if (!activeJob?.meshUrl) disabledModes.push('3d');
-  if (!activeJob?.videoUrl) disabledModes.push('video');
-  if (!activeJob?.heroImageUrl) disabledModes.push('photo');
+  if (!activeJob?.result?.mesh_url) disabledModes.push('3d');
+  if (!activeJob?.result?.video_url) disabledModes.push('video');
+  if (!activeJob?.result?.photo_url) disabledModes.push('photo');
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -259,13 +261,13 @@ export default function TryOnFlow() {
             <ProgressTracker />
 
             {/* Show partial results as they arrive */}
-            {activeJob?.heroImageUrl && (
+            {activeJob?.result?.photo_url && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="rounded-2xl overflow-hidden"
               >
-                <PhotoView imageUrl={activeJob.heroImageUrl} />
+                <PhotoView imageUrl={activeJob.result.photo_url} />
               </motion.div>
             )}
 
@@ -307,15 +309,15 @@ export default function TryOnFlow() {
 
             {/* Viewer */}
             <div className="glass-card overflow-hidden" style={{ minHeight: '550px' }}>
-              {viewMode === '3d' && activeJob.meshUrl ? (
-                <Scene meshUrl={activeJob.meshUrl} />
-              ) : viewMode === 'video' && activeJob.videoUrl ? (
+              {viewMode === '3d' && activeJob.result?.mesh_url ? (
+                <Scene meshUrl={activeJob.result.mesh_url} />
+              ) : viewMode === 'video' && activeJob.result?.video_url ? (
                 <VideoPlayer
-                  videoUrl={activeJob.videoUrl}
-                  poster={activeJob.heroImageUrl}
+                  videoUrl={activeJob.result.video_url}
+                  poster={activeJob.result?.photo_url}
                 />
-              ) : activeJob.heroImageUrl ? (
-                <PhotoView imageUrl={activeJob.heroImageUrl} />
+              ) : activeJob.result?.photo_url ? (
+                <PhotoView imageUrl={activeJob.result.photo_url} />
               ) : (
                 <FallbackState
                   title="No result available"
@@ -335,9 +337,9 @@ export default function TryOnFlow() {
               >
                 Try Another
               </button>
-              {activeJob.heroImageUrl && (
+              {activeJob.result?.photo_url && (
                 <a
-                  href={activeJob.heroImageUrl}
+                  href={activeJob.result.photo_url}
                   download
                   className="px-6 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-white font-semibold transition-colors inline-flex items-center gap-2"
                 >

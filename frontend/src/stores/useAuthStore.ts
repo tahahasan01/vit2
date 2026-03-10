@@ -12,7 +12,7 @@ interface AuthStore {
 
   /* Actions */
   initialize: () => Promise<void>;
-  signUp: (email: string, password: string, displayName?: string) => Promise<void>;
+  signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   recordConsent: (consent: ConsentPayload) => Promise<void>;
@@ -65,13 +65,12 @@ export const useAuthStore = create<AuthStore>()(
         });
       },
 
-      signUp: async (email, password, displayName) => {
+      signUp: async (email, password) => {
         set({ loading: true });
         try {
           const { data, error } = await supabase.auth.signUp({
             email,
             password,
-            options: { data: { display_name: displayName } },
           });
           if (error) throw error;
 
@@ -88,7 +87,7 @@ export const useAuthStore = create<AuthStore>()(
               ? {
                   id: data.user.id,
                   email: data.user.email!,
-                  display_name: displayName,
+                  consent_given: false,
                   created_at: data.user.created_at,
                 }
               : null,
@@ -123,7 +122,7 @@ export const useAuthStore = create<AuthStore>()(
               ? {
                   id: data.user.id,
                   email: data.user.email!,
-                  display_name: data.user.user_metadata?.display_name,
+                  consent_given: false,
                   created_at: data.user.created_at,
                 }
               : null,
