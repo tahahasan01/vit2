@@ -19,6 +19,10 @@ pybreaker==1.2.*
 # ── Logging ──────────────────────────────────
 structlog==24.4.*
 
+# ── Web scraping ─────────────────────────────
+beautifulsoup4==4.12.*
+lxml==5.3.*
+
 # ── Image processing ────────────────────────
 Pillow==11.1.*
 

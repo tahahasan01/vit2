@@ -149,6 +149,28 @@ export interface HealthResponse {
   services: ExternalServiceStatus[];
 }
 
+/* ─── Scraper ─── */
+
+export interface ScrapedGarment {
+  name: string;
+  brand: string;
+  description: string;
+  price: string;
+  currency: string;
+  image_url: string;
+  product_url: string;
+  category: GarmentCategory;
+  source_domain: string;
+}
+
+export interface ScrapeResponse {
+  url: string;
+  garments: ScrapedGarment[];
+  total: number;
+  imported: number;
+  errors: string[];
+}
+
 /* ─── Consent ─── */
 
 export interface ConsentPayload {

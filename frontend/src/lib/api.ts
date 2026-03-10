@@ -96,6 +96,7 @@ import type {
   ConsentPayload,
   UserProfile,
   AuthResponse,
+  ScrapeResponse,
 } from '@/types';
 
 export const api = {
@@ -163,6 +164,13 @@ export const api = {
 
   /* ── Health ── */
   getHealth: () => request<HealthResponse>('/health'),
+
+  /* ── Scraper ── */
+  scrapeGarments: (url: string, importToCatalog = false) =>
+    request<ScrapeResponse>('/scraper/scrape', {
+      method: 'POST',
+      body: JSON.stringify({ url, import_to_catalog: importToCatalog }),
+    }),
 };
 
 export default api;

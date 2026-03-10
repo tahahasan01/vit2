@@ -9,6 +9,7 @@ Routes:
   /api/v1/auth/*      → signup, login, logout, consent
   /api/v1/tryon/*     → submit VTO jobs, poll status, history
   /api/v1/garments/*  → browse & upload garment catalog
+  /api/v1/scraper/*   → scrape garments from any clothing website
   /api/v1/health      → service health & circuit breaker states
   /api/v1/metrics     → Prometheus-format metrics
 """
@@ -27,7 +28,7 @@ from fastapi.responses import JSONResponse
 from app.config import get_settings
 from app.middleware.logging_middleware import LoggingMiddleware
 from app.middleware.rate_limit import RateLimitMiddleware
-from app.routers import auth_router, garments_router, health_router, tryon_router
+from app.routers import auth_router, garments_router, health_router, scraper_router, tryon_router
 from app.services.auth_service import AuthService
 from app.services.body_estimation_service import BodyEstimationService
 from app.services.fashn_service import FashnService
@@ -170,6 +171,7 @@ def create_app() -> FastAPI:
     app.include_router(tryon_router, prefix=api_prefix)
     app.include_router(garments_router, prefix=api_prefix)
     app.include_router(health_router, prefix=api_prefix)
+    app.include_router(scraper_router, prefix=api_prefix)
 
     # ── Global exception handler ─────────────────────────────────
     @app.exception_handler(Exception)

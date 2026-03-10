@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useGarments } from '@/hooks/useGarments';
 import { useTryOnStore } from '@/stores/useTryOnStore';
 import { GarmentCategory } from '@/types';
+import ScrapeModal from './ScrapeModal';
 
 const CATEGORIES = [
   { key: null, label: 'All' },
@@ -21,32 +23,51 @@ export default function GarmentCatalog() {
     setCategory,
     nextPage,
     prevPage,
+    refresh,
   } = useGarments();
 
   const selectedGarmentId = useTryOnStore((s) => s.selectedGarmentId);
   const selectGarment = useTryOnStore((s) => s.selectGarment);
+  const [scrapeOpen, setScrapeOpen] = useState(false);
 
   return (
     <div className="space-y-6">
-      {/* Category tabs */}
-      <div className="flex gap-2 justify-center flex-wrap">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat.label}
-            onClick={() => setCategory(cat.key)}
-            className={`
-              px-4 py-2 rounded-full text-sm font-medium transition-colors
-              ${
-                category === cat.key
-                  ? 'bg-brand-500/20 text-brand-400 border border-brand-500/40'
-                  : 'bg-surface-800 text-white/50 hover:text-white/80 border border-transparent'
-              }
-            `}
-          >
-            {cat.label}
-          </button>
-        ))}
+      {/* Header with scrape button */}
+      <div className="flex items-center justify-between">
+        <div className="flex gap-2 flex-wrap">
+          {CATEGORIES.map((cat) => (
+            <button
+              key={cat.label}
+              onClick={() => setCategory(cat.key)}
+              className={`
+                px-4 py-2 rounded-full text-sm font-medium transition-colors
+                ${
+                  category === cat.key
+                    ? 'bg-brand-500/20 text-brand-400 border border-brand-500/40'
+                    : 'bg-surface-800 text-white/50 hover:text-white/80 border border-transparent'
+                }
+              `}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={() => setScrapeOpen(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-surface-800 hover:bg-surface-700 border border-white/10 hover:border-brand-500/40 text-white/70 hover:text-brand-400 rounded-full text-sm font-medium transition-all"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+          </svg>
+          Scrape Website
+        </button>
       </div>
+
+      <ScrapeModal
+        open={scrapeOpen}
+        onClose={() => setScrapeOpen(false)}
+        onImported={() => refresh()}
+      />
 
       {/* Loading state */}
       {loading && (
